@@ -7,7 +7,7 @@ import java.time.Instant;
 
 public class ProductDto {
 
-    public Long id;
+    public int id;
     public String name;
     public String slug;
     public String description;
@@ -15,10 +15,11 @@ public class ProductDto {
     public Instant dateModified;
     public String sku;
     public Double price;
-    public int totalSales;
-    public int stockQty;
+    public Integer totalSales;
+    public Integer stockQty;
     public boolean taxable;
     public String taxClass;
+    public Category category;
 
     public static ProductDto fromProduct(Product product){
         var dto = new ProductDto();
@@ -35,7 +36,7 @@ public class ProductDto {
         dto.stockQty = product.getStockQty();
         dto.taxable = product.isTaxable();
         dto.taxClass = product.getTaxClass();
-
+        dto.category = product.getCategory();
 
         return dto;
     }

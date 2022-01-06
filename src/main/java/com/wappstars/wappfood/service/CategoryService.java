@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository){
@@ -23,7 +23,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public Category getCategory(Long categoryId){
+    public Category getCategory(Integer categoryId){
         Optional<Category> category = categoryRepository.findById(categoryId);
 
         if(category.isPresent()){
@@ -34,15 +34,16 @@ public class CategoryService {
         }
     }
 
-    public Category addCategory(Category category){
-        return categoryRepository.save(category);
+    public Integer addCategory(Category category){
+        Category newCategory = categoryRepository.save(category);
+        return newCategory.getId();
     }
 
-    public void deleteCategory(Long categoryId){
+    public void deleteCategory(Integer categoryId){
         categoryRepository.deleteById(categoryId);
     }
 
-    public void updateCategory(Long id, Category category){
+    public void updateCategory(Integer id, Category category){
         if(!categoryRepository.existsById(id)){
             // exception
             throw new RecordNotFoundException("No category found!");

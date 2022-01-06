@@ -7,12 +7,12 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseIdEntentity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -22,11 +22,11 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     private Instant dateModified;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -1,30 +1,14 @@
 package com.wappstars.wappfood.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wappstars.wappfood.shared.BaseEntity;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import com.wappstars.wappfood.shared.BaseNameEntity;
+import com.wappstars.wappfood.util.Slug;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "product", uniqueConstraints = {@UniqueConstraint(name = "sku_unique", columnNames = "sku")})
-public class Product extends BaseEntity {
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    @Size(max = 25)
-    private String name;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    @Size(max = 50)
-    private String slug;
-
-    @Column(columnDefinition = "TEXT")
-    @Size(max = 255)
-    private String description;
+public class Product extends BaseNameEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     @Size(max = 25)
@@ -34,10 +18,10 @@ public class Product extends BaseEntity {
     private Double price;
 
     @Column(nullable = false)
-    private int totalSales;
+    private Integer totalSales;
 
     @Column(nullable = false)
-    private int stockQty;
+    private Integer stockQty;
 
     @Column(nullable = false)
     private boolean taxable;
@@ -46,29 +30,9 @@ public class Product extends BaseEntity {
     @Size(max = 25)
     private String taxClass;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(foreignKey = @ForeignKey(name = "category_id_fk"), name = "category_id")
+    private Category category;
 
     public String getSku() {
         return sku;
@@ -86,19 +50,19 @@ public class Product extends BaseEntity {
         this.price = price;
     }
 
-    public int getTotalSales() {
+    public Integer getTotalSales() {
         return totalSales;
     }
 
-    public void setTotalSales(int totalSales) {
+    public void setTotalSales(Integer totalSales) {
         this.totalSales = totalSales;
     }
 
-    public int getStockQty() {
+    public Integer getStockQty() {
         return stockQty;
     }
 
-    public void setStockQty(int stockQty) {
+    public void setStockQty(Integer stockQty) {
         this.stockQty = stockQty;
     }
 
@@ -116,5 +80,13 @@ public class Product extends BaseEntity {
 
     public void setTaxClass(String taxClass) {
         this.taxClass = taxClass;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
