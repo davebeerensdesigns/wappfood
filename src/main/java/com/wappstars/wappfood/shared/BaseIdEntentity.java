@@ -1,10 +1,17 @@
 package com.wappstars.wappfood.shared;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 
 @MappedSuperclass
 public abstract class BaseIdEntentity {
@@ -14,35 +21,11 @@ public abstract class BaseIdEntentity {
     @Column(updatable = false)
     private Integer id;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreationTimestamp
     private Instant dateCreated;
 
-    @Column(nullable = false)
     @UpdateTimestamp
     private Instant dateModified;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Instant getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Instant dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Instant getDateModified() {
-        return dateModified;
-    }
-
-    public void setDateModified(Instant dateModified) {
-        this.dateModified = dateModified;
-    }
 }

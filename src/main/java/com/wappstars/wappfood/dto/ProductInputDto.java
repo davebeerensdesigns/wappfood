@@ -2,9 +2,6 @@ package com.wappstars.wappfood.dto;
 
 import com.wappstars.wappfood.model.Category;
 import com.wappstars.wappfood.model.Product;
-import com.wappstars.wappfood.util.Slug;
-
-import java.time.Instant;
 
 public class ProductInputDto {
 

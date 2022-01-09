@@ -2,16 +2,19 @@ package com.wappstars.wappfood.controller;
 
 import com.wappstars.wappfood.dto.CategoryDto;
 import com.wappstars.wappfood.dto.CategoryInputDto;
+import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
 import com.wappstars.wappfood.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class CategoryController {
@@ -36,12 +39,13 @@ public class CategoryController {
     }
 
     @GetMapping("/wp-json/wf/v1/categories/{categoryId}")
-    public ResponseEntity<Object> getCategory(@PathVariable("categoryId") Integer categoryId){
-        return ResponseEntity.ok().body(categoryService.getCategory(categoryId));
+    public ResponseEntity<Object> getCategory(@PathVariable("categoryId") Integer categoryId) throws EntityNotFoundException {
+            var category = categoryService.getCategory(categoryId);
+            return ResponseEntity.ok().body(CategoryDto.fromCategory(category));
     }
 
     @PostMapping("/wp-json/wf/v1/categories")
-    public ResponseEntity<Object> addCategory(@RequestBody CategoryInputDto dto){
+    public ResponseEntity<Object> addCategory(@RequestBody @Valid CategoryInputDto dto){
         Integer productId = categoryService.addCategory(dto.toCategory());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{categoryId}")
@@ -51,14 +55,18 @@ public class CategoryController {
     }
 
     @DeleteMapping("/wp-json/wf/v1/categories/{categoryId}")
-    public ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Integer categoryId){
+    public ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Integer categoryId) throws EntityNotFoundException{
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/wp-json/wf/v1/categories/{categoryId}")
-    public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody Category category){
-        categoryService.updateCategory(categoryId, category);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid Category category){
+            categoryService.updateCategory(categoryId, category);
+
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .buildAndExpand(categoryId).toUri();
+
+            return ResponseEntity.created(location).body(location);
     }
 }
