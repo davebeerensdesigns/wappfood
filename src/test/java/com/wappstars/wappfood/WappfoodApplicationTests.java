@@ -9,5 +9,4 @@ class WappfoodApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-// TODO: Create tests for current code (product, category, exceptions)
 }
