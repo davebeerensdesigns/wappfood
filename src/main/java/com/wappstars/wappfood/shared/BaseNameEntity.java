@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 
 @MappedSuperclass
-public abstract class BaseNameEntity extends BaseIdEntentity{
+public abstract class BaseNameEntity extends BaseIdEntity {
 
     @Size(max = 25)
     @NotBlank(message = "Name is mandatory")
