@@ -10,5 +10,4 @@ public class WappfoodApplication {
 		SpringApplication.run(WappfoodApplication.class, args);
 		System.out.println("Application is running");
 	}
-
 }
