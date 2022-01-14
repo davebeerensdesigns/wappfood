@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "category")
+@Table(name = "category", uniqueConstraints = {@UniqueConstraint(name = "cat_slug_unique", columnNames = "slug")})
 public class Category extends BaseNameEntity {
 
     @OneToMany(mappedBy = "category")

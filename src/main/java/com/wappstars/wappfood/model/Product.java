@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "product", uniqueConstraints = {@UniqueConstraint(name = "sku_unique", columnNames = "sku")})
+@Table(name = "product", uniqueConstraints = {@UniqueConstraint(name = "sku_unique", columnNames = "sku"), @UniqueConstraint(name = "prod_slug_unique", columnNames = "slug")})
 public class Product extends BaseNameEntity {
 
     @Size(max = 25)
