@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 @CrossOrigin
 @RestController
+@RequestMapping(value = "/wp-json/wf/v1/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -24,7 +25,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/wp-json/wf/v1/categories")
+    @GetMapping
     public ResponseEntity<Object> getCategories(){
         var dtos = new ArrayList<CategoryDto>();
         var categories = categoryService.getCategories();
@@ -36,13 +37,13 @@ public class CategoryController {
         return ResponseEntity.ok().body(dtos);
     }
 
-    @GetMapping("/wp-json/wf/v1/categories/{categoryId}")
+    @GetMapping("/{categoryId}")
     public ResponseEntity<Object> getCategory(@PathVariable("categoryId") Integer categoryId) {
             var category = categoryService.getCategory(categoryId);
             return ResponseEntity.ok().body(CategoryDto.fromCategory(category));
     }
 
-    @PostMapping("/wp-json/wf/v1/categories")
+    @PostMapping
     public ResponseEntity<Object> addCategory(@RequestBody @Valid CategoryInputDto dto)  {
         Integer productId = categoryService.addCategory(dto.toCategory());
 
@@ -52,13 +53,13 @@ public class CategoryController {
         return ResponseEntity.created(location).body(location);
     }
 
-    @DeleteMapping("/wp-json/wf/v1/categories/{categoryId}")
+    @DeleteMapping("/{categoryId}")
     public ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/wp-json/wf/v1/categories/{categoryId}")
+    @PutMapping("/{categoryId}")
     public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid Category category){
             categoryService.updateCategory(categoryId, category);
 

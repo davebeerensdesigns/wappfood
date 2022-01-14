@@ -22,7 +22,7 @@ import java.util.Map;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/wp-json/wf/v1/users")
 public class UserController {
 
     private UserService userService;
@@ -51,7 +51,7 @@ public class UserController {
         return ResponseEntity.ok().body(UserDto.fromUser(user));
     }
 
-    @PostMapping(value = "")
+    @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto dto) {
 
         var user = dto.toUser();
