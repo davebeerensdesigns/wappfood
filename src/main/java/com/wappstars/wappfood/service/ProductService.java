@@ -87,12 +87,18 @@ public class ProductService {
         newProduct.setTaxClass(
                 product.getTaxClass()
         );
-        newProduct.setCategory(
-                product.getCategory()
-        );
+
+        Integer prodCatId = product.getCategory().getId();
+        if(!categoryRepository.existsById(prodCatId)){
+            throw new EntityNotFoundException(Category.class, "category id", prodCatId.toString());
+        } else {
+            newProduct.setCategory(
+                    product.getCategory()
+            );
+        }
 
         productRepository.save(newProduct);
-        return product.getId();
+        return newProduct.getId();
 
     }
 
