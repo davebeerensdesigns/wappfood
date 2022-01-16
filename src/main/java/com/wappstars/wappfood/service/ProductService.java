@@ -29,7 +29,7 @@ public class ProductService {
     public List<Product> getProducts(){
         List<Product> products = productRepository.findAll();
         if(products.isEmpty()){
-            throw new EntityNotFoundException(Product.class, "No products found");
+            throw new EntityNotFoundException(Product.class);
         }
         return products;
     }

@@ -1,5 +1,6 @@
 package com.wappstars.wappfood.model;
 
+import com.wappstars.wappfood.shared.BaseCreatedEntity;
 import com.wappstars.wappfood.shared.BaseIdEntity;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "email_unique", columnNames = "email")})
-public class User {
+public class User extends BaseCreatedEntity {
 
     @Id
     @Column(nullable = false)

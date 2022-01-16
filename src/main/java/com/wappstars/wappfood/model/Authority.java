@@ -2,6 +2,8 @@ package com.wappstars.wappfood.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @IdClass(com.wappstars.wappfood.model.AuthorityKey.class)
@@ -15,6 +17,25 @@ public class Authority implements Serializable {
     @Id
     @Column(nullable = false)
     private String authority;
+
+    public enum UserRoles {
+        ADMIN("ROLE_ADMIN"),
+        MANAGER("ROLE_MANAGER"),
+        EMPLOYEE("ROLE_EMPLOYEE"),
+        CUSTOMER("ROLE_CUSTOMER"),
+        DEFAULT("ROLE_USER");
+
+        String value;
+        UserRoles(String value){
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+    }
 
     public Authority() {}
     public Authority(String username, String authority) {

@@ -24,7 +24,7 @@ public class CategoryService {
     public List<Category> getCategories(){
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty()){
-            throw new EntityNotFoundException(Category.class, "No categories found");
+            throw new EntityNotFoundException(Category.class);
         }
         return categories;
     }

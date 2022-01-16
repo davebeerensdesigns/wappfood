@@ -1,10 +1,8 @@
 package com.wappstars.wappfood.controller;
 
 import com.wappstars.wappfood.apierror.ApiError;
-import com.wappstars.wappfood.exception.BadRequestException;
-import com.wappstars.wappfood.exception.EntityNotFoundException;
-import com.wappstars.wappfood.exception.RecordNotFoundException;
-import com.wappstars.wappfood.exception.UsernameNotFoundException;
+import com.wappstars.wappfood.exception.*;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -52,6 +50,23 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
+
+    @ExceptionHandler(value = OptionDoesNotExistException.class)
+    public ResponseEntity<Object> exception(OptionDoesNotExistException ex) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(value = DefaultRoleCantBeRemovedExceloption.class)
+    public ResponseEntity<Object> exception(DefaultRoleCantBeRemovedExceloption ex) {
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+
+
 
     /**
      * Handle MissingServletRequestParameterException. Triggered when a 'required' request parameter is missing.
@@ -151,6 +166,14 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(EntityExistsException.class)
+    protected ResponseEntity<Object> handleEntityExistsException(
+            EntityExistsException ex) {
+        ApiError apiError = new ApiError(HttpStatus.CONFLICT);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     /**
      * Handle HttpMessageNotReadableException. Happens when request JSON is malformed.
      *
@@ -200,13 +223,6 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
-    /**
-     * Handle javax.persistence.EntityNotFoundException
-     */
-    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
-    }
 
     /**
      * Handle DataIntegrityViolationException, inspects the cause for different DB causes.

@@ -1,5 +1,6 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Authority;
 import com.wappstars.wappfood.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userService.getUser(username);
 
         if (user == null) {
-            throw new UsernameNotFoundException(username);
+            throw new EntityNotFoundException(User.class, "username", username);
         }
 
         String password = user.getPassword();
