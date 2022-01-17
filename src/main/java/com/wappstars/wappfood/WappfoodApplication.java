@@ -10,12 +10,12 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-
+	// TODO: Check product/category conflict -> make function
 	// TODO: Create better repsonses (and maybe use HATEOS?)
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions
 	// TODO: Extend user to a Customer with more meta data
-	// TODO: Add created and modified date to users. (maybe last login date)
+	// TODO: Add modified by user. (maybe last login date)
 	// TODO: Add image upload to product, category and user
 	// TODO: Create tests for current code (product, category, exceptions)
 	// TODO: Build the rest of the application after above is finished (Cart, Tax, TaxClass,ShippingMethods, ShippingZones, PaymentGateway, Order, LineItems, ActionScheduler)

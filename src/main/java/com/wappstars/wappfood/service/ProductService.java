@@ -1,5 +1,6 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
 import com.wappstars.wappfood.model.Product;
@@ -57,21 +58,29 @@ public class ProductService {
         newProduct.setName(
                 product.getName()
         );
-        newProduct.setSlug(
-                StringToSlugResolver.makeSlug(
-                        HtmlToTextResolver.HtmlToText(
-                                (product.getSlug() != null ) ? product.getSlug() : product.getName()
-                        )
-                )
-        );
+
+        String slug = (product.getSlug() == null ) ? product.getName() : product.getSlug();
+        if(productRepository.existsBySlug(slug)){
+            throw new EntityExistsException(Product.class, "slug", slug);
+        } else {
+            newProduct.setSlug(
+                    StringToSlugResolver.makeSlug(
+                            HtmlToTextResolver.HtmlToText(slug)
+                    )
+            );
+        }
         newProduct.setDescription(
                 HtmlToTextResolver.HtmlToText(
                         product.getDescription()
                 )
         );
-        newProduct.setSku(
-                product.getSku()
-        );
+        if(productRepository.existsBySku(product.getSku())){
+            throw new EntityExistsException(Product.class, "sku", product.getSku());
+        } else {
+            newProduct.setSku(
+                    product.getSku()
+            );
+        }
         newProduct.setPrice(
                 product.getPrice()
         );

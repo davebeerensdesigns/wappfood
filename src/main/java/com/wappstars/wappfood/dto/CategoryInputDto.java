@@ -9,8 +9,6 @@ public class CategoryInputDto {
     public String name;
     public String slug;
     public String description;
-    public Instant dateCreated;
-    public Instant dateModified;
 
     public Category toCategory(){
 
@@ -19,8 +17,6 @@ public class CategoryInputDto {
         category.setName(name);
         category.setSlug(slug);
         category.setDescription(description);
-        category.setDateCreated(dateCreated);
-        category.setDateModified(dateModified);
 
         return category;
     }

@@ -51,11 +51,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto dto) {
+    public ResponseEntity<Object> createUser(@RequestBody UserInputDto dto) {
 
-        var user = dto.toUser();
-
-        String newUsername = userService.createUser(user);
+        String newUsername = userService.createUser(dto.toUser());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
@@ -64,11 +62,9 @@ public class UserController {
     }
 
     @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserInputDto dto) {
+    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody UserInputDto dto) {
 
-        var user = dto.toUser();
-
-        userService.updateUser(username, user);
+        userService.updateUser(username, dto.toUser());
 
         return ResponseEntity.noContent().build();
     }

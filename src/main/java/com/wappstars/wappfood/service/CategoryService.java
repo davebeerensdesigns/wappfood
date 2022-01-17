@@ -1,7 +1,9 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
+import com.wappstars.wappfood.model.Product;
 import com.wappstars.wappfood.repository.CategoryRepository;
 import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.util.StringToSlugResolver;
@@ -41,13 +43,17 @@ public class CategoryService {
         newCategory.setName(
                 category.getName()
         );
-        newCategory.setSlug(
-                StringToSlugResolver.makeSlug(
-                        HtmlToTextResolver.HtmlToText(
-                                (category.getSlug() != null ) ? category.getSlug() : category.getName()
-                        )
-                )
-        );
+
+        String slug = (category.getSlug() == null ) ? category.getName() : category.getSlug();
+        slug = HtmlToTextResolver.HtmlToText(slug);
+        slug = StringToSlugResolver.makeSlug(slug);
+        if(categoryRepository.existsBySlug(slug)){
+            throw new EntityExistsException(Category.class, "slug", slug);
+        } else {
+            newCategory.setSlug(
+                    slug
+            );
+        }
         newCategory.setDescription(
                 HtmlToTextResolver.HtmlToText(
                         category.getDescription()
@@ -75,9 +81,21 @@ public class CategoryService {
         existingCategory.setName(
                 category.getName()
         );
-        existingCategory.setSlug(
-                (category.getSlug() != null ) ? StringToSlugResolver.makeSlug(category.getSlug()) : existingCategory.getSlug()
-        );
+
+        if (category.getSlug() != null) {
+            String slug = HtmlToTextResolver.HtmlToText(category.getSlug());
+            slug = StringToSlugResolver.makeSlug(slug);
+            if(!slug.equals(existingCategory.getSlug())) {
+                if (categoryRepository.existsBySlug(slug)) {
+                    throw new EntityExistsException(Category.class, "slug", slug);
+                } else {
+                    existingCategory.setSlug(
+                            slug
+                    );
+                }
+            }
+        }
+
         existingCategory.setDescription(
                 HtmlToTextResolver.HtmlToText(
                         category.getDescription()

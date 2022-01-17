@@ -60,8 +60,8 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid Category category){
-            categoryService.updateCategory(categoryId, category);
+    public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid CategoryInputDto dto){
+            categoryService.updateCategory(categoryId, dto.toCategory());
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                     .buildAndExpand(categoryId).toUri();
