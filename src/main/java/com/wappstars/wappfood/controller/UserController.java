@@ -1,15 +1,11 @@
 package com.wappstars.wappfood.controller;
 
-import com.wappstars.wappfood.dto.ProductDto;
 import com.wappstars.wappfood.dto.UserDto;
 import com.wappstars.wappfood.dto.UserInputDto;
-import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.User;
-import com.wappstars.wappfood.service.ProductService;
 import com.wappstars.wappfood.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,9 +28,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers() {
+    public ResponseEntity<Object> getUsers() {
         var dtos = new ArrayList<UserDto>();
-
         List<User> users = userService.getUsers();
 
         for (User user : users) {
@@ -46,13 +41,12 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<Object> getUser(@PathVariable("username") String username)  {
-        var user = userService.getUser(username);
+        User user = userService.getUser(username);
         return ResponseEntity.ok().body(UserDto.fromUser(user));
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserInputDto dto) {
-
+    public ResponseEntity<Object> createUser(@RequestBody @Valid UserInputDto dto) {
         String newUsername = userService.createUser(dto.toUser());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
@@ -62,11 +56,13 @@ public class UserController {
     }
 
     @PutMapping(value = "/{username}")
-    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody UserInputDto dto) {
-
+    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody @Valid UserInputDto dto) {
         userService.updateUser(username, dto.toUser());
 
-        return ResponseEntity.noContent().build();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .buildAndExpand(username).toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping(value = "/{username}")
@@ -84,7 +80,7 @@ public class UserController {
     public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody @Valid Map<String, Object> fields) {
         String authorityName = (String) fields.get("authority");
         userService.addAuthority(username, authorityName);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/{username}/authorities/{authority}")

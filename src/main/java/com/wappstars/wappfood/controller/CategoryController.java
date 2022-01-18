@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -28,7 +29,7 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Object> getCategories(){
         var dtos = new ArrayList<CategoryDto>();
-        var categories = categoryService.getCategories();
+        List<Category> categories = categoryService.getCategories();
 
         for (Category category : categories){
             dtos.add(CategoryDto.fromCategory(category));
@@ -39,7 +40,7 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<Object> getCategory(@PathVariable("categoryId") Integer categoryId) {
-            var category = categoryService.getCategory(categoryId);
+            Category category = categoryService.getCategory(categoryId);
             return ResponseEntity.ok().body(CategoryDto.fromCategory(category));
     }
 
@@ -53,12 +54,6 @@ public class CategoryController {
         return ResponseEntity.created(location).body(location);
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
-        categoryService.deleteCategory(categoryId);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/{categoryId}")
     public ResponseEntity<Object> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid CategoryInputDto dto){
             categoryService.updateCategory(categoryId, dto.toCategory());
@@ -67,5 +62,11 @@ public class CategoryController {
                     .buildAndExpand(categoryId).toUri();
 
             return ResponseEntity.created(location).body(location);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return ResponseEntity.noContent().build();
     }
 }

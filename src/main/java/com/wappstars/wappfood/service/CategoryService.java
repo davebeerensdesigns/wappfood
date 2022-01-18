@@ -26,7 +26,7 @@ public class CategoryService {
     public List<Category> getCategories(){
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty()){
-            throw new EntityNotFoundException(Category.class);
+            throw new EntityNotFoundException(Category.class, "GET", "*");
         }
         return categories;
     }
@@ -54,6 +54,7 @@ public class CategoryService {
                     slug
             );
         }
+
         newCategory.setDescription(
                 HtmlToTextResolver.HtmlToText(
                         category.getDescription()
@@ -78,9 +79,11 @@ public class CategoryService {
 
         Category existingCategory = categoryRepository.findById(categoryId).orElse(null);
 
-        existingCategory.setName(
-                category.getName()
-        );
+        if(category.getName() != null) {
+            existingCategory.setName(
+                    HtmlToTextResolver.HtmlToText(category.getName())
+            );
+        }
 
         if (category.getSlug() != null) {
             String slug = HtmlToTextResolver.HtmlToText(category.getSlug());
@@ -96,11 +99,13 @@ public class CategoryService {
             }
         }
 
-        existingCategory.setDescription(
-                HtmlToTextResolver.HtmlToText(
-                        category.getDescription()
-                )
-        );
+        if(category.getDescription() != null) {
+            existingCategory.setDescription(
+                    HtmlToTextResolver.HtmlToText(
+                            category.getDescription()
+                    )
+            );
+        }
 
         categoryRepository.save(existingCategory);
     }

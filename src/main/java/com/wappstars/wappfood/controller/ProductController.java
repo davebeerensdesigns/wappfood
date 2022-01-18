@@ -49,7 +49,7 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ResponseEntity<Object> getProduct(@PathVariable("productId") Integer productId)  {
-            var product = productService.getProduct(productId);
+            Product product = productService.getProduct(productId);
             return ResponseEntity.ok().body(ProductDto.fromProduct(product));
     }
 

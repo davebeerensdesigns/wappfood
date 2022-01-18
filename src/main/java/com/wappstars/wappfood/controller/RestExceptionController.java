@@ -3,6 +3,7 @@ package com.wappstars.wappfood.controller;
 import com.wappstars.wappfood.apierror.ApiError;
 import com.wappstars.wappfood.exception.*;
 import org.apache.tomcat.util.buf.StringUtils;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -233,17 +234,8 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
                                                                   WebRequest request) {
-
         if (ex.getCause() instanceof ConstraintViolationException) {
-            String message;
-            if(ex.getMessage().contains("sku_unique")){
-                message = "The sku already exists.";
-            } else if(ex.getMessage().contains("slug_unique")){
-                message = "The slug already exists.";
-            } else {
-                message = "Database error";
-            }
-            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, message, ex.getCause()));
+            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, ex.getRootCause().getMessage(), ex.getCause()));
         }
         return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
