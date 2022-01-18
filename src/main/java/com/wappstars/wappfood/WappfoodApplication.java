@@ -10,7 +10,6 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-	// TODO: Check product/category conflict -> make function
 	// TODO: Create better repsonses (and maybe use HATEOS?)
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions

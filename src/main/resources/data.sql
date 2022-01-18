@@ -7,13 +7,21 @@ VALUES
 (localtimestamp, localtimestamp, 'This is a product description. It should not allow HTML.', 'Avocado Nigiri', 1.50, 'NIG001', 'avocado-nigiri', 50, 'Standaard', true, 0, 1),
 (localtimestamp, localtimestamp, 'This is a product description. It should not allow HTML.', 'Zalm Nigiri', 1.60, 'NIG002', 'zalm-nigiri', 50, 'Standaard', true, 0, 1);
 
-INSERT INTO users (username, password, email, enabled)
+INSERT INTO users (username, apikey, email, enabled, password)
 VALUES
-('user', '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS','user@wappfood.nl', TRUE),
-('admin', '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS', 'admin@wappfood.nl', TRUE);
+('user', 'fdgtrthahrddfa','user@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS'),
+('admin', 'greahgrtwsreg', 'admin@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS');
 
 INSERT INTO authorities (username, authority)
 VALUES
 ('user', 'ROLE_USER'),
 ('admin', 'ROLE_USER'),
 ('admin', 'ROLE_ADMIN');
+
+INSERT INTO customer (date_created, date_modified, first_name, is_paying_customer, last_name)
+VALUES
+(localtimestamp, localtimestamp, 'firstName', true, 'lastName');
+
+INSERT INTO customer_meta (meta_key, meta_value, customer_id)
+VALUES
+('_billing_address', 'straatnaam 1', 1);
