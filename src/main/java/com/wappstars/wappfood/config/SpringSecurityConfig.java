@@ -47,13 +47,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //JWT token authentication
         http
-                .csrf().disable()
-                .authorizeRequests()
-//                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/users").hasAnyRole("MANAGER", "ADMIN")
-//                .antMatchers(HttpMethod.POST,"/wp-json/wf/v1/users/**").hasRole("ADMIN")
-//                .antMatchers(HttpMethod.DELETE, "/wp-json/wf/v1/users/**").hasRole("ADMIN")
-//                .antMatchers("/wp-json/wf/v1/authenticated").authenticated()
-//                .antMatchers("/wp-json/wf/v1/authenticate").permitAll()
+                .cors().and().authorizeRequests()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/products").permitAll()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/categories").permitAll()
+                .antMatchers("/wp-json/wf/v1/users").hasRole("ADMIN")
+                .antMatchers("/wp-json/wf/v1/authenticated").authenticated()
+                .antMatchers("/wp-json/wf/v1/authenticate").permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .sessionManagement()
