@@ -71,8 +71,8 @@ public class Customer extends BaseCreatedEntity {
         return customerMetas;
     }
 
-    public void setCustomerMetas(List<CustomerMeta> customerMetas) {
-        this.customerMetas = customerMetas;
+    public void addCustomerMeta(String metaKey, String metaValue) {
+        this.customerMetas.add(new CustomerMeta(metaKey, metaValue, this));
     }
 
     @Override
