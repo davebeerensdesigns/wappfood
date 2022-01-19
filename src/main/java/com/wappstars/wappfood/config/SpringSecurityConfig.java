@@ -47,7 +47,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //JWT token authentication
         http
-                .cors().and().authorizeRequests()
+                .csrf().disable()
+//                .cors().and()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/products").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/categories").permitAll()
                 .antMatchers("/wp-json/wf/v1/users").hasRole("ADMIN")

@@ -4,18 +4,22 @@ import com.wappstars.wappfood.shared.BaseCreatedEntity;
 import com.wappstars.wappfood.shared.BaseIdEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "email_unique", columnNames = "email")})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "user_email_unique", columnNames = "email")})
 public class User extends BaseCreatedEntity {
 
     @Id
     @Column(nullable = false)
+    @NotNull(message = "Username is mandatory")
     private String username;
 
     @Column(nullable = false, length = 255)
+    @NotNull(message = "Password is mandatory")
     private String password;
 
     @Column(nullable = false)
@@ -25,6 +29,8 @@ public class User extends BaseCreatedEntity {
     private String apikey;
 
     @Column
+    @NotNull(message = "Email is mandatory")
+    @Email
     private String email;
 
     @OneToMany(

@@ -56,4 +56,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
+
+    // TODO: Create a logout method which removes/disables the bearer token
 }

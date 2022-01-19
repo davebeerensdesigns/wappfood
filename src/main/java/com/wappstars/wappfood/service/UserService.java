@@ -2,7 +2,9 @@ package com.wappstars.wappfood.service;
 
 import com.wappstars.wappfood.exception.*;
 import com.wappstars.wappfood.model.Authority;
+import com.wappstars.wappfood.model.Customer;
 import com.wappstars.wappfood.model.User;
+import com.wappstars.wappfood.repository.CustomerRepository;
 import com.wappstars.wappfood.repository.UserRepository;
 import com.wappstars.wappfood.util.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public List<User> getUsers() {
         List<User> users = userRepository.findAll();
@@ -50,6 +55,13 @@ public class UserService {
 
     public void deleteUser(String username) {
         if (!userRepository.existsById(username)) throw new EntityNotFoundException(User.class, "username", username);
+
+        Customer customer = customerRepository.findByUsername(username);
+        if(customer != null) {
+            customer.setUsername(null);
+            customerRepository.save(customer);
+        }
+
         userRepository.deleteById(username);
     }
 

@@ -19,7 +19,8 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    public static final long EXPIRATION_TIME = 900_000; // 15 mins
+    // TODO: Make exception when token expired
+    public static final long EXPIRATION_TIME = 900_000_000; // 15 mins
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

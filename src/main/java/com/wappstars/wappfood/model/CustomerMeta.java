@@ -1,7 +1,9 @@
 package com.wappstars.wappfood.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table
@@ -19,6 +21,7 @@ public class CustomerMeta {
     private String metaValue;
 
     @ManyToOne
+    @JsonIgnore
     private Customer customer;
 
     public CustomerMeta() {
