@@ -1,7 +1,6 @@
 package com.wappstars.wappfood.dto;
 
 import com.wappstars.wappfood.model.Customer;
-import com.wappstars.wappfood.model.User;
 
 public class CustomerInputDto {
 

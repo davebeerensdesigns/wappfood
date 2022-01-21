@@ -22,8 +22,3 @@ VALUES
 INSERT INTO customer (date_created, date_modified, first_name, is_paying_customer, last_name, email, username)
 VALUES
 (localtimestamp, localtimestamp, 'firstName', true, 'lastName', 'user@wappfood.nl', 'user');
-
-INSERT INTO customer_meta (meta_key, meta_value, customer_id)
-VALUES
-('_billing_address', 'straatnaam 1', 1),
-('_billing_postcode', '1234 AA', 1);

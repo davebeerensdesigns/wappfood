@@ -1,14 +1,9 @@
 package com.wappstars.wappfood.service;
 
-import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
-import com.wappstars.wappfood.model.Authority;
-import com.wappstars.wappfood.model.Customer;
-import com.wappstars.wappfood.model.Product;
-import com.wappstars.wappfood.model.User;
+import com.wappstars.wappfood.model.*;
 import com.wappstars.wappfood.repository.CustomerRepository;
 import com.wappstars.wappfood.repository.UserRepository;
-import com.wappstars.wappfood.util.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +42,10 @@ public class CustomerService {
                 throw new EntityNotFoundException(User.class, "username", customer.getUsername());
             }
         }
-        Customer newCustomer = customerRepository.save(customer);
-        return newCustomer.getId();
+
+        customerRepository.save(customer);
+
+        return customer.getId();
     }
 
     public void deleteCustomer(Integer customerId) {

@@ -1,12 +1,8 @@
 package com.wappstars.wappfood.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wappstars.wappfood.model.Customer;
-import com.wappstars.wappfood.model.CustomerMeta;
-import com.wappstars.wappfood.model.User;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 public class CustomerDto {
@@ -19,8 +15,6 @@ public class CustomerDto {
     public String email;
     public Boolean isPayingCustomer;
     public String username;
-    public Map<String, String> billing;
-    public Map<String, String> shipping;
 
     public static CustomerDto fromCustomer(Customer customer){
 
@@ -34,8 +28,6 @@ public class CustomerDto {
         dto.email = customer.getEmail();
         dto.isPayingCustomer = customer.isPayingCustomer();
         dto.username = customer.getUsername();
-        dto.billing = customer.getBilling();
-        dto.shipping = customer.getShipping();
 
         return dto;
     }
