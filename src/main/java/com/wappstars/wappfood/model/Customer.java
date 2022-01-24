@@ -33,6 +33,9 @@ public class Customer extends BaseCreatedEntity {
     @Column
     private String username;
 
+    @OneToMany(mappedBy = "customer")
+    private Set<CustomerMeta> customerMetas;
+
     public Integer getId() {
         return id;
     }
@@ -81,4 +84,73 @@ public class Customer extends BaseCreatedEntity {
         this.username = username;
     }
 
+    public Map<String, String> getBilling(){
+        Map<String, String> billingMap = new HashMap<>();
+        for (CustomerMeta metaData : customerMetas) {
+            switch(metaData.getMetaKey()){
+                case "_billing_phone":
+                    billingMap.put("phone", metaData.getMetaValue());
+                    break;
+                case "_billing_email":
+                    billingMap.put("email", metaData.getMetaValue());
+                    break;
+                case "_billing_company":
+                    billingMap.put("company", metaData.getMetaValue());
+                    break;
+                case "_billing_address":
+                    billingMap.put("address", metaData.getMetaValue());
+                    break;
+                case "_billing_city":
+                    billingMap.put("city", metaData.getMetaValue());
+                    break;
+                case "_billing_state":
+                    billingMap.put("state", metaData.getMetaValue());
+                    break;
+                case "_billing_postcode":
+                    billingMap.put("postcode", metaData.getMetaValue());
+                    break;
+                case "_billing_country":
+                    billingMap.put("country", metaData.getMetaValue());
+                    break;
+            }
+        }
+
+        return billingMap;
+    }
+
+    public Map<String, String> getShipping(){
+        Map<String, String> shippingMap = new HashMap<>();
+        for (CustomerMeta metaData : customerMetas) {
+            switch(metaData.getMetaKey()){
+                case "_shipping_company":
+                    shippingMap.put("company", metaData.getMetaValue());
+                    break;
+                case "_shipping_address":
+                    shippingMap.put("address", metaData.getMetaValue());
+                    break;
+                case "_shipping_city":
+                    shippingMap.put("city", metaData.getMetaValue());
+                    break;
+                case "_shipping_state":
+                    shippingMap.put("state", metaData.getMetaValue());
+                    break;
+                case "_shipping_postcode":
+                    shippingMap.put("postcode", metaData.getMetaValue());
+                    break;
+                case "_shipping_country":
+                    shippingMap.put("country", metaData.getMetaValue());
+                    break;
+            }
+        }
+
+        return shippingMap;
+    }
+
+    public Set<CustomerMeta> getCustomerMetas() { return customerMetas; }
+    public void addCustomerMeta(CustomerMeta customerMeta) {
+        this.customerMetas.add(customerMeta);
+    }
+    public void removeCustomerMeta(CustomerMeta customerMeta) {
+        this.customerMetas.remove(customerMeta);
+    }
 }

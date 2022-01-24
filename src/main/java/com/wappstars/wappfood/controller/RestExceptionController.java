@@ -2,8 +2,6 @@ package com.wappstars.wappfood.controller;
 
 import com.wappstars.wappfood.apierror.ApiError;
 import com.wappstars.wappfood.exception.*;
-import org.apache.tomcat.util.buf.StringUtils;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -59,8 +57,8 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
-    @ExceptionHandler(value = DefaultRoleCantBeRemovedExceloption.class)
-    public ResponseEntity<Object> exception(DefaultRoleCantBeRemovedExceloption ex) {
+    @ExceptionHandler(value = DefaultRoleCantBeRemovedException.class)
+    public ResponseEntity<Object> exception(DefaultRoleCantBeRemovedException ex) {
         ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
@@ -238,6 +236,20 @@ public class RestExceptionController extends ResponseEntityExceptionHandler {
             return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, ex.getRootCause().getMessage(), ex.getCause()));
         }
         return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    }
+
+    /**
+     * Handle DataIntegrityViolationException, inspects the cause for different DB causes.
+     *
+     * @param ex the DataIntegrityViolationException
+     * @return the ApiError object
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                  WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
     }
 
     /**

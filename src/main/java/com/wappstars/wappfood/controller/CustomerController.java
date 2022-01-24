@@ -3,6 +3,7 @@ package com.wappstars.wappfood.controller;
 import com.wappstars.wappfood.dto.CustomerDto;
 import com.wappstars.wappfood.dto.CustomerInputDto;
 import com.wappstars.wappfood.model.Customer;
+import com.wappstars.wappfood.model.CustomerMeta;
 import com.wappstars.wappfood.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -68,6 +70,28 @@ public class CustomerController {
     public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") Integer customerId) {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
+    }
+
+
+
+    @GetMapping("/{customerId}/metadata")
+    public ResponseEntity<Object> getCustomerMetas(@PathVariable("customerId") Integer customerId)  {
+        List<CustomerMeta> customerMetas = customerService.getCustomerMetas(customerId);
+        return ResponseEntity.ok().body(customerMetas);
+    }
+
+    @PostMapping("/{customerId}/billing")
+    public ResponseEntity<Object> addCustomerBilling(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
+
+        Customer customer = customerService.addCustomerMeta(customerId, metaData, "billing");
+        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+    }
+
+    @PostMapping("/{customerId}/shipping")
+    public ResponseEntity<Object> addCustomerShipping(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
+
+        Customer customer = customerService.addCustomerMeta(customerId, metaData, "shipping");
+        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
     }
 
 }

@@ -120,7 +120,7 @@ public class UserService {
         User user = userRepository.findById(username).get();
         Authority authorityToRemove = user.getAuthorities().stream().filter((a) -> a.getAuthority().equalsIgnoreCase(authority)).findAny().get();
         if(authorityToRemove.getAuthority().equalsIgnoreCase(Authority.UserRoles.DEFAULT.toString())) {
-            throw new DefaultRoleCantBeRemovedExceloption(Authority.class, "authority", Authority.UserRoles.DEFAULT.toString());
+            throw new DefaultRoleCantBeRemovedException(Authority.class, "authority", Authority.UserRoles.DEFAULT.toString());
         } else {
             user.removeAuthority(authorityToRemove);
             Instant updated = Instant.now();

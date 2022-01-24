@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class DefaultRoleCantBeRemovedExceloption extends RuntimeException {
+public class DefaultRoleCantBeRemovedException extends RuntimeException {
 
-    public DefaultRoleCantBeRemovedExceloption(Class clazz, String... searchParamsMap) {
-        super(DefaultRoleCantBeRemovedExceloption.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
+    public DefaultRoleCantBeRemovedException(Class clazz, String... searchParamsMap) {
+        super(DefaultRoleCantBeRemovedException.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
     }
 
     private static String generateMessage(String entity, Map<String, String> searchParams) {

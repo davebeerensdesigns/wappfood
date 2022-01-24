@@ -13,9 +13,8 @@ public class WappfoodApplication {
 	// TODO: Create better repsonses (and maybe use HATEOS?)
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions
-	// TODO: Connect user to a Customer
-	// TODO: Make controller, service, repository for customer and metadata
-	// TODO: GET/POST billing and shipping object in database for customer
+	// TODO: Create remove and update for customer meta data
+	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
 	// TODO: Add modified by user. (maybe last login date)
 	// TODO: Add image upload to product, category and user
 	// TODO: Create tests for current code (product, category, exceptions)

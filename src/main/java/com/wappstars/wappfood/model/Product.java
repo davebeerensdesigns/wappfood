@@ -42,5 +42,4 @@ public class Product extends BaseNameEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "category_id_fk"), name = "category_id")
     @NotNull(message = "Category is mandatory")
     private Category category;
-
 }
