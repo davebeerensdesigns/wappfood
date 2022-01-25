@@ -3,6 +3,7 @@ package com.wappstars.wappfood.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "customer_meta", uniqueConstraints = @UniqueConstraint(name = "customer_meta_key_unique", columnNames = {"meta_key", "customer_id"}))
@@ -14,14 +15,17 @@ public class CustomerMeta {
     private Integer id;
 
     @Column(name = "meta_key")
+    @NotNull(message = "Metakey is mandatory")
     private String metaKey;
 
     @Column(name = "meta_value")
+    @NotNull(message = "Metavalue is mandatory")
     private String metaValue;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonIgnore
+    @NotNull(message = "Customer is mandatory")
     private Customer customer;
 
     public CustomerMeta(){}

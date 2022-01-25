@@ -10,10 +10,8 @@ import com.wappstars.wappfood.validators.ValidMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -204,6 +202,148 @@ public class CustomerService {
 
         return customer;
 
+    }
+
+
+
+    public Customer updateCustomerMeta(Integer customerId, Map<String, String> metaData, String type) {
+        if (!customerMetaRepository.existsByCustomerId(customerId)) throw new EntityNotFoundException(CustomerMeta.class, "customer_id", customerId.toString());
+        String metaType = new String();
+        if(type.equals("billing")){
+            metaType = "billing";
+        } else if (type.equals("shipping")){
+            metaType = "shipping";
+        }
+        if(!metaType.isEmpty()){
+            for (var entry : metaData.entrySet()) {
+                switch(entry.getKey()){
+                    case "phone":
+                        if(metaType.equals("billing")){
+                            CustomerMeta currentPhone = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_phone", customerId);
+                            if(currentPhone != null){
+                                String phone = HtmlToTextResolver.HtmlToText(entry.getValue());
+                                if(!ValidMetaData.isValidPhone(phone)){
+                                    throw new IllegalArgumentException("Please enter a valid phone number");
+                                } else {
+                                    currentPhone.setMetaValue(phone);
+                                    customerMetaRepository.save(currentPhone);
+                                }
+                            }
+                        }
+                        break;
+                    case "email":
+                        if(metaType.equals("billing")){
+                            CustomerMeta currentEmail = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_email", customerId);
+                            if(currentEmail != null){
+                                String email = HtmlToTextResolver.HtmlToText(entry.getValue());
+                                if(!ValidMetaData.isValidEmail(email)){
+                                    throw new IllegalArgumentException("Please enter a valid email address");
+                                } else {
+                                    currentEmail.setMetaValue(email);
+                                    customerMetaRepository.save(currentEmail);
+                                }
+                            }
+                        }
+                        break;
+                    case "company":
+                        CustomerMeta currentCompany = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_company", customerId);
+                        if(currentCompany != null){
+                            String company = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidCompany(company)){
+                                throw new IllegalArgumentException("Please enter a valid company");
+                            } else {
+                                currentCompany.setMetaValue(company);
+                                customerMetaRepository.save(currentCompany);
+                            }
+                        }
+                        break;
+                    case "address":
+                        CustomerMeta currentAddress = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_address", customerId);
+                        if(currentAddress != null){
+                            String address = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidAddress(address)){
+                                throw new IllegalArgumentException("Please enter a valid address");
+                            } else {
+                                currentAddress.setMetaValue(address);
+                                customerMetaRepository.save(currentAddress);
+                            }
+                        }
+                        break;
+                    case "city":
+                        CustomerMeta currentCity = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_city", customerId);
+                        if(currentCity != null){
+                            String city = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidCity(city)){
+                                throw new IllegalArgumentException("Please enter a valid city");
+                            } else {
+                                currentCity.setMetaValue(city);
+                                customerMetaRepository.save(currentCity);
+                            }
+                        }
+                        break;
+                    case "state":
+                        CustomerMeta currentState = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_state", customerId);
+                        if(currentState != null){
+                            String state = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidState(state)){
+                                throw new IllegalArgumentException("Please enter a valid state");
+                            } else {
+                                currentState.setMetaValue(state);
+                                customerMetaRepository.save(currentState);
+                            }
+                        }
+                        break;
+                    case "postcode":
+                        CustomerMeta currentPostcode = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_postcode", customerId);
+                        if(currentPostcode != null){
+                            String postcode = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidPostcode(postcode)){
+                                throw new IllegalArgumentException("Please enter a valid postcode");
+                            } else {
+                                currentPostcode.setMetaValue(postcode);
+                                customerMetaRepository.save(currentPostcode);
+                            }
+                        }
+                        break;
+                    case "country":
+                        CustomerMeta currentCountry = customerMetaRepository.findByMetaKeyAndCustomerId("_"+metaType+"_country", customerId);
+                        if(currentCountry != null){
+                            String country = HtmlToTextResolver.HtmlToText(entry.getValue());
+                            if(!ValidMetaData.isValidCountry(country)){
+                                throw new IllegalArgumentException("Please enter a valid country");
+                            } else {
+                                currentCountry.setMetaValue(country);
+                                customerMetaRepository.save(currentCountry);
+                            }
+                        }
+                        break;
+                }
+
+            }
+        }
+        Customer customer = customerRepository.findById(customerId).get();
+        return customer;
+
+    }
+
+    @Transactional
+    public void removeCustomerMeta(Integer customerId, ArrayList<String> metaKey) {
+        if(!customerMetaRepository.existsByCustomerId(customerId))
+            throw new EntityNotFoundException(CustomerMeta.class, "customer_id", customerId.toString());
+
+        for (String array : metaKey){
+            String formatted = HtmlToTextResolver.HtmlToText(array);
+            if(ValidMetaData.isValidMetaKey(formatted)) {
+                customerMetaRepository.deleteByMetaKeyAndCustomerId(formatted, customerId);
+            }
+        }
+    }
+
+    @Transactional
+    public void removeAllCustomerMeta(Integer customerId) {
+        if(!customerMetaRepository.existsByCustomerId(customerId))
+            throw new EntityNotFoundException(CustomerMeta.class, "customer_id", customerId.toString());
+        customerMetaRepository.deleteAllByCustomerId(customerId);
     }
 
 }

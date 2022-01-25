@@ -94,4 +94,32 @@ public class CustomerController {
         return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
     }
 
+    @PutMapping("/{customerId}/billing")
+    public ResponseEntity<Object> updateCustomerBilling(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
+
+        Customer customer = customerService.updateCustomerMeta(customerId, metaData, "billing");
+        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+    }
+
+    @PutMapping("/{customerId}/shipping")
+    public ResponseEntity<Object> updateCustomerShipping(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
+
+        Customer customer = customerService.updateCustomerMeta(customerId, metaData, "shipping");
+        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+    }
+
+    @DeleteMapping("/{customerId}/metadata")
+    public ResponseEntity<Object> deleteCustomerMetas(@PathVariable("customerId") Integer customerId, @RequestBody @Valid ArrayList<String> metaData) {
+
+        customerService.removeCustomerMeta(customerId, metaData);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{customerId}/all/metadata")
+    public ResponseEntity<Object> deleteCustomerMetas(@PathVariable("customerId") Integer customerId) {
+
+        customerService.removeAllCustomerMeta(customerId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
