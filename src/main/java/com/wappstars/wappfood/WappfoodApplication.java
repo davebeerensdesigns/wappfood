@@ -10,7 +10,8 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-	// TODO: Create better repsonses (and maybe use HATEOS?)
+	// TODO: Use same Logic on User and Customer as i did on Product and Category
+	// TODO: Add pagination to entity collections
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions
 	// TODO: Create remove and update for customer meta data
