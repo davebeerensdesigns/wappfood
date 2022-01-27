@@ -1,19 +1,21 @@
 package com.wappstars.wappfood.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import com.wappstars.wappfood.assembler.ProductDtoAssembler;
 import com.wappstars.wappfood.dto.ProductDto;
 import com.wappstars.wappfood.dto.ProductInputDto;
 import com.wappstars.wappfood.model.Product;
 import com.wappstars.wappfood.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 
 
 @CrossOrigin
@@ -22,60 +24,60 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductDtoAssembler productDtoAssembler;
 
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService, ProductDtoAssembler productDtoAssembler){
         this.productService = productService;
+        this.productDtoAssembler = productDtoAssembler;
     }
 
     @GetMapping
-    public ResponseEntity<Object> getProducts(@RequestParam(value = "category_id", required = false) Integer categoryId){
-            var dtos = new ArrayList<ProductDto>();
-
-            List<Product> products;
-
-            if(categoryId != null ){
-                products = productService.getProductsByCategoryId(categoryId);
-            } else {
-                products = productService.getProducts();
-            }
-
-            for (Product product : products){
-                dtos.add(ProductDto.fromProduct(product));
-            }
-
-            return ResponseEntity.ok().body(dtos);
+    public ResponseEntity<CollectionModel<ProductDto>> getProducts(){
+        return ResponseEntity.ok(productDtoAssembler.toCollectionModel(productService.getProducts()));
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Object> getProduct(@PathVariable("productId") Integer productId)  {
-            Product product = productService.getProduct(productId);
-            return ResponseEntity.ok().body(ProductDto.fromProduct(product));
+    public ResponseEntity<ProductDto> getProduct(@PathVariable("productId") Integer productId)  {
+        return productService.getProduct(productId) //
+            .map(product -> {
+                ProductDto productDto = productDtoAssembler.toModel(product)
+                        .add(linkTo(methodOn(ProductController.class).getProducts()).withRel("products"));
+
+                return ResponseEntity.ok(productDto);
+            })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Object> addProduct(@RequestBody @Valid ProductInputDto dto) {
-        Integer productId = productService.addProduct(dto.toProduct());
+    public ResponseEntity<?> addProduct(@RequestBody @Valid ProductInputDto dto) {
+        try {
+            Product savedProduct = productService.addProduct(dto.toProduct());
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{productId}")
-                .buildAndExpand(productId).toUri();
+            ProductDto productDto = productDtoAssembler.toModel(savedProduct)
+                    .add(linkTo(methodOn(ProductController.class).getProducts()).withRel("products"));
 
-        return ResponseEntity.created(location).body(location);
+            return ResponseEntity //
+                    .created(new URI(productDto.getRequiredLink(IanaLinkRelations.SELF).getHref()))
+                    .body(productDto);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.badRequest().body("Unable to create product");
+        }
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<Object> updateProduct(@PathVariable("productId") Integer productId, @RequestBody @Valid ProductInputDto dto){
-            productService.updateProduct(productId, dto.toProduct());
+    public ResponseEntity<?> updateProduct(@PathVariable("productId") Integer productId, @RequestBody @Valid ProductInputDto dto){
 
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .buildAndExpand(productId).toUri();
-
-            return ResponseEntity.created(location).body(location);
+        Product updatedProduct = productService.updateProduct(productId, dto.toProduct());
+        ProductDto productDto = productDtoAssembler.toModel(updatedProduct)
+                .add(linkTo(methodOn(ProductController.class).getProducts()).withRel("products"));
+        return ResponseEntity
+                .ok(productDto);
 
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable("productId") Integer productId) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") Integer productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
