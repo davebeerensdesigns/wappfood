@@ -1,43 +1,31 @@
 package com.wappstars.wappfood.dto;
 
-import com.wappstars.wappfood.model.Category;
-import com.wappstars.wappfood.model.Product;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.Instant;
+import java.util.TreeMap;
 
-public class ProductDto {
+@Builder
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@Relation(itemRelation = "product", collectionRelation = "products")
+public class ProductDto extends RepresentationModel<ProductDto> {
 
-    public int id;
-    public String name;
-    public String slug;
-    public String description;
-    public Instant dateCreated;
-    public Instant dateModified;
-    public String sku;
-    public Double price;
-    public Integer totalSales;
-    public Integer stockQty;
-    public boolean taxable;
-    public String taxClass;
-    public Category category;
-
-    public static ProductDto fromProduct(Product product){
-        var dto = new ProductDto();
-
-        dto.id = product.getId();
-        dto.name = product.getName();
-        dto.slug = product.getSlug();
-        dto.description = product.getDescription();
-        dto.dateCreated = product.getDateCreated();
-        dto.dateModified = product.getDateModified();
-        dto.sku = product.getSku();
-        dto.price = product.getPrice();
-        dto.totalSales = product.getTotalSales();
-        dto.stockQty = product.getStockQty();
-        dto.taxable = product.isTaxable();
-        dto.taxClass = product.getTaxClass();
-        dto.category = product.getCategory();
-
-        return dto;
-    }
+    private final int id;
+    private final String name;
+    private final String slug;
+    private final String description;
+    private final Instant dateCreated;
+    private final Instant dateModified;
+    private final String sku;
+    private final Double price;
+    private final Integer totalSales;
+    private final Integer stockQty;
+    private final boolean taxable;
+    private final String taxClass;
+    private final TreeMap<String, String> category;
 }
