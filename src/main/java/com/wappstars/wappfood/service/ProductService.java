@@ -11,7 +11,9 @@ import com.wappstars.wappfood.util.StringToSlugResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 //TODO: Run validations on product
 
@@ -35,10 +37,12 @@ public class ProductService {
         return products;
     }
 
-    public Product getProduct(Integer productId) {
-        return productRepository
-                .findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(Product.class, "product id", productId.toString()));
+    public Optional<Product> getProduct(Integer productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if(product.isEmpty()){
+            throw new EntityNotFoundException(Product.class, "product id", productId.toString());
+        }
+        return product;
     }
 
     public List<Product> getProductsByCategoryId(Integer categoryId){
@@ -52,21 +56,21 @@ public class ProductService {
         return products;
     }
 
-    public Integer addProduct(Product product) {
+    public Product addProduct(Product product) {
         Product newProduct = new Product();
 
         newProduct.setName(
-                product.getName()
+                HtmlToTextResolver.HtmlToText(product.getName())
         );
 
         String slug = (product.getSlug() == null ) ? product.getName() : product.getSlug();
+        slug = HtmlToTextResolver.HtmlToText(slug);
+        slug = StringToSlugResolver.makeSlug(slug);
         if(productRepository.existsBySlug(slug)){
             throw new EntityExistsException(Product.class, "slug", slug);
         } else {
             newProduct.setSlug(
-                    StringToSlugResolver.makeSlug(
-                            HtmlToTextResolver.HtmlToText(slug)
-                    )
+                    slug
             );
         }
         newProduct.setDescription(
@@ -101,13 +105,13 @@ public class ProductService {
         if(!categoryRepository.existsById(prodCatId)){
             throw new EntityNotFoundException(Category.class, "category id", prodCatId.toString());
         } else {
+            Category category = categoryRepository.getById(prodCatId);
             newProduct.setCategory(
-                    product.getCategory()
+                    category
             );
         }
 
-        productRepository.save(newProduct);
-        return newProduct.getId();
+        return productRepository.save(newProduct);
 
     }
 
@@ -118,47 +122,84 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public void updateProduct(Integer productId, Product product) {
-        if(!productRepository.existsById(productId)){
-            throw new EntityNotFoundException(Product.class, "product id", productId.toString());
+    public Product updateProduct(Integer productId, Product product) {
+
+        Product existingProduct = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(Product.class, "product id", productId.toString()));
+
+        if(product.getName() != null)
+            existingProduct.setName(
+                HtmlToTextResolver.HtmlToText(product.getName())
+            );
+
+        if(product.getSlug() != null) {
+            String slug = HtmlToTextResolver.HtmlToText(product.getSlug());
+            slug = StringToSlugResolver.makeSlug(slug);
+            if (!slug.equals(existingProduct.getSlug())) {
+                if (productRepository.existsBySlug(slug)) {
+                    throw new EntityExistsException(Product.class, "slug", slug);
+                } else {
+                    existingProduct.setSlug(
+                            slug
+                    );
+                }
+            }
         }
 
-        Product existingProduct = productRepository.findById(productId).orElse(null);
-
-        existingProduct.setName(
-                product.getName()
-        );
-        existingProduct.setSlug(
-                (product.getSlug() != null ) ? StringToSlugResolver.makeSlug(product.getSlug()) : existingProduct.getSlug()
-        );
+        if(product.getDescription() != null)
         existingProduct.setDescription(
                 HtmlToTextResolver.HtmlToText(
                         product.getDescription()
                 )
         );
-        existingProduct.setSku(
-                product.getSku()
-        );
+
+        if(product.getSku() != null)
+        if(productRepository.existsBySku(product.getSku())){
+            throw new EntityExistsException(Product.class, "sku", product.getSku());
+        } else {
+            existingProduct.setSku(
+                    product.getSku()
+            );
+        }
+
+        if(product.getSku() != null)
         existingProduct.setPrice(
                 product.getPrice()
         );
+
+        if(product.getTotalSales() != null)
         existingProduct.setTotalSales(
                 product.getTotalSales()
         );
+
+        if(product.getStockQty() != null)
         existingProduct.setStockQty(
                 product.getStockQty()
         );
-        existingProduct.setTaxable(
-                product.isTaxable()
-        );
+
+        if(product.isTaxable() == true) {
+            existingProduct.setTaxable(true);
+        } else if(product.isTaxable() == true){
+            existingProduct.setTaxable(false);
+        }
+
+        if(product.getTaxClass() != null)
         existingProduct.setTaxClass(
                 product.getTaxClass()
         );
-        existingProduct.setCategory(
-                product.getCategory()
-        );
 
-        productRepository.save(existingProduct);
+        if(product.getCategory().getId() != null) {
+            Integer prodCatId = product.getCategory().getId();
+            if (!categoryRepository.existsById(prodCatId)) {
+                throw new EntityNotFoundException(Category.class, "category id", prodCatId.toString());
+            } else {
+                Category category = categoryRepository.getById(prodCatId);
+                existingProduct.setCategory(
+                        category
+                );
+            }
+        }
+
+        return productRepository.save(existingProduct);
     }
 
 }

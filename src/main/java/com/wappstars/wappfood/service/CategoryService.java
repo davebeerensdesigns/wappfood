@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 //TODO: Run validations on category
 
@@ -31,17 +32,19 @@ public class CategoryService {
         return categories;
     }
 
-    public Category getCategory(Integer categoryId) {
-        return categoryRepository
-                .findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class, "id", categoryId.toString()));
+    public Optional<Category> getCategory(Integer categoryId) {
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        if(category.isEmpty()){
+            throw new EntityNotFoundException(Category.class, "category id", categoryId.toString());
+        }
+        return category;
     }
 
-    public Integer addCategory(Category category){
+    public Category addCategory(Category category){
         Category newCategory = new Category();
 
         newCategory.setName(
-                category.getName()
+                HtmlToTextResolver.HtmlToText(category.getName())
         );
 
         String slug = (category.getSlug() == null ) ? category.getName() : category.getSlug();
@@ -61,8 +64,7 @@ public class CategoryService {
                 )
         );
 
-        categoryRepository.save(newCategory);
-        return newCategory.getId();
+        return categoryRepository.save(newCategory);
     }
 
     public void deleteCategory(Integer categoryId){
@@ -72,12 +74,9 @@ public class CategoryService {
         categoryRepository.deleteById(categoryId);
     }
 
-    public void updateCategory(Integer categoryId, Category category) {
-        if(!categoryRepository.existsById(categoryId)){
-            throw new EntityNotFoundException(Category.class, "category id", categoryId.toString());
-        }
+    public Category updateCategory(Integer categoryId, Category category) {
 
-        Category existingCategory = categoryRepository.findById(categoryId).orElse(null);
+        Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(Category.class, "category id", categoryId.toString()));
 
         if(category.getName() != null) {
             existingCategory.setName(
@@ -85,10 +84,10 @@ public class CategoryService {
             );
         }
 
-        if (category.getSlug() != null) {
+        if(category.getSlug() != null) {
             String slug = HtmlToTextResolver.HtmlToText(category.getSlug());
             slug = StringToSlugResolver.makeSlug(slug);
-            if(!slug.equals(existingCategory.getSlug())) {
+            if (!slug.equals(existingCategory.getSlug())) {
                 if (categoryRepository.existsBySlug(slug)) {
                     throw new EntityExistsException(Category.class, "slug", slug);
                 } else {
@@ -107,6 +106,6 @@ public class CategoryService {
             );
         }
 
-        categoryRepository.save(existingCategory);
+        return categoryRepository.save(existingCategory);
     }
 }
