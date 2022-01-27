@@ -1,26 +1,52 @@
 package com.wappstars.wappfood.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wappstars.wappfood.shared.BaseNameEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.List;
 
 @Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
 @Table(name = "category", uniqueConstraints = {@UniqueConstraint(name = "cat_slug_unique", columnNames = "slug")})
-public class Category extends BaseNameEntity {
+public class Category extends RepresentationModel<Category> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
+    private Integer id;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant dateCreated;
+
+    @UpdateTimestamp
+    private Instant dateModified;
+
+    @Size(max = 25)
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @Size(max = 50)
+    private String slug;
+
+    @Size(max = 255)
+    private String description;
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore
-    List<Product> products;
+    private List<Product> products;
 
 }

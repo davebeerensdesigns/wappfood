@@ -1,23 +1,48 @@
 package com.wappstars.wappfood.model;
 
-import com.wappstars.wappfood.shared.BaseNameEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 
 @Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
 @Table(name = "product", uniqueConstraints = {@UniqueConstraint(name = "sku_unique", columnNames = "sku"), @UniqueConstraint(name = "prod_slug_unique", columnNames = "slug")})
-public class Product extends BaseNameEntity {
+public class Product extends RepresentationModel<Product> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
+    private Integer id;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant dateCreated;
+
+    @UpdateTimestamp
+    private Instant dateModified;
+
+    @Size(max = 25)
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @Size(max = 50)
+    private String slug;
+
+    @Size(max = 255)
+    private String description;
 
     @Size(max = 25)
     private String sku;
@@ -38,7 +63,7 @@ public class Product extends BaseNameEntity {
     @Size(max = 25)
     private String taxClass;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "category_id_fk"), name = "category_id")
     @NotNull(message = "Category is mandatory")
     private Category category;
