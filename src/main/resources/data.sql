@@ -7,10 +7,10 @@ VALUES
 (localtimestamp, localtimestamp, 'This is a product description. It should not allow HTML.', 'Avocado Nigiri', 1.50, 'NIG001', 'avocado-nigiri', 50, 'Standaard', true, 0, 1),
 (localtimestamp, localtimestamp, 'This is a product description. It should not allow HTML.', 'Zalm Nigiri', 1.60, 'NIG002', 'zalm-nigiri', 50, 'Standaard', true, 0, 1);
 
-INSERT INTO users (username, apikey, email, enabled, password)
+INSERT INTO users (date_created, date_modified, username, apikey, email, enabled, password)
 VALUES
-('user', 'fdgtrthahrddfa','user@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS'),
-('admin', 'greahgrtwsreg', 'admin@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS');
+(localtimestamp, localtimestamp, 'user', 'fdgtrthahrddfa','user@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS'),
+(localtimestamp, localtimestamp, 'admin', 'greahgrtwsreg', 'admin@wappfood.nl', TRUE, '$2a$12$GEnymscrjZufETmnysLVC.tcr.8OHhHGz/XQhYlvdkjCW6DDOtsPS');
 
 INSERT INTO authorities (username, authority)
 VALUES

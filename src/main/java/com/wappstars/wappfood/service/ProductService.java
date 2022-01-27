@@ -11,8 +11,6 @@ import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.util.StringToSlugResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +44,7 @@ public class ProductService {
         return product;
     }
 
+    // TODO: Create endpoint for products by category
     public List<Product> getProductsByCategoryId(Integer categoryId){
         if(!categoryRepository.existsById(categoryId)){
             throw new EntityNotFoundException(Category.class, "category id", categoryId.toString());

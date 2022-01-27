@@ -21,16 +21,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private AuthorityService authorityService;
-
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userService.getUser(username);
-
-        if (user == null) {
-            throw new EntityNotFoundException(User.class, "username", username);
-        }
+        User user = userService.getUser(username)
+                .orElseThrow(() -> new EntityNotFoundException(User.class, "username", username));
 
         String password = user.getPassword();
 

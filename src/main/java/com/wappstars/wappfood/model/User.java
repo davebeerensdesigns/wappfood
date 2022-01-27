@@ -2,16 +2,28 @@ package com.wappstars.wappfood.model;
 
 import com.wappstars.wappfood.shared.BaseCreatedEntity;
 import com.wappstars.wappfood.shared.BaseIdEntity;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "user_email_unique", columnNames = "email")})
-public class User extends BaseCreatedEntity {
+public class User extends RepresentationModel<User> {
 
     @Id
     @Column(nullable = false)
@@ -33,6 +45,13 @@ public class User extends BaseCreatedEntity {
     @Email
     private String email;
 
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant dateCreated;
+
+    @UpdateTimestamp
+    private Instant dateModified;
+
     @OneToMany(
             targetEntity = com.wappstars.wappfood.model.Authority.class,
             mappedBy = "username",
@@ -40,23 +59,6 @@ public class User extends BaseCreatedEntity {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<com.wappstars.wappfood.model.Authority> authorities = new HashSet<>();
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public boolean isEnabled() { return enabled;}
-    public void setEnabled(boolean enabled) { this.enabled = enabled; }
-    public String getApikey() { return apikey; }
-    public void setApikey(String apikey) { this.apikey = apikey; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email;}
 
     public Set<Authority> getAuthorities() { return authorities; }
     public void addAuthority(Authority authority) {

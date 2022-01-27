@@ -1,18 +1,21 @@
 package com.wappstars.wappfood.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import com.wappstars.wappfood.assembler.UserDtoAssembler;
 import com.wappstars.wappfood.dto.UserDto;
 import com.wappstars.wappfood.dto.UserInputDto;
 import com.wappstars.wappfood.model.User;
 import com.wappstars.wappfood.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 @CrossOrigin
@@ -20,57 +23,67 @@ import java.util.Map;
 @RequestMapping(value = "/wp-json/wf/v1/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
+    private final UserDtoAssembler userDtoAssembler;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, UserDtoAssembler userDtoAssembler){
         this.userService = userService;
+        this.userDtoAssembler = userDtoAssembler;
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUsers() {
-        var dtos = new ArrayList<UserDto>();
-        List<User> users = userService.getUsers();
-
-        for (User user : users) {
-            dtos.add(UserDto.fromUser(user));
-        }
-
-        return ResponseEntity.ok().body(dtos);
+    public ResponseEntity<CollectionModel<UserDto>> getUsers(){
+        return ResponseEntity.ok(userDtoAssembler.toCollectionModel(userService.getUsers()));
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<Object> getUser(@PathVariable("username") String username)  {
-        User user = userService.getUser(username);
-        return ResponseEntity.ok().body(UserDto.fromUser(user));
+    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username)  {
+        return userService.getUser(username) //
+                .map(user -> {
+                    UserDto userDto = userDtoAssembler.toModel(user)
+                            .add(linkTo(methodOn(UserController.class).getUsers()).withRel("users"));
+
+                    return ResponseEntity.ok(userDto);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody @Valid UserInputDto dto) {
-        String newUsername = userService.createUser(dto.toUser());
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserInputDto dto) {
+        try {
+            User savedUser = userService.addUser(dto);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
-                .buildAndExpand(newUsername).toUri();
+            UserDto userDto = userDtoAssembler.toModel(savedUser)
+                    .add(linkTo(methodOn(UserController.class).getUsers()).withRel("users"));
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity //
+                    .created(new URI(userDto.getRequiredLink(IanaLinkRelations.SELF).getHref()))
+                    .body(userDto);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.badRequest().body("Unable to create user");
+        }
     }
 
     @PutMapping(value = "/{username}")
-    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody @Valid UserInputDto dto) {
-        userService.updateUser(username, dto.toUser());
+    public ResponseEntity<?> updateUser(@PathVariable("username") String username, @RequestBody @Valid UserInputDto dto) {
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .buildAndExpand(username).toUri();
+        User updatedUser = userService.updateUser(username, dto);
+        UserDto userDto = userDtoAssembler.toModel(updatedUser)
+                .add(linkTo(methodOn(UserController.class).getUsers()).withRel("users"));
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.ok(userDto);
     }
 
     @DeleteMapping(value = "/{username}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
+    public ResponseEntity<?> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
 
+
+
+    // TODO: AUTHORITIES!!
     @GetMapping(value = "/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
         return ResponseEntity.ok().body(userService.getUserAuthorities(username));

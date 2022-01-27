@@ -11,6 +11,7 @@ public class WappfoodApplication {
 	}
 
 	// TODO: Use same Logic on User and Customer as i did on Product and Category
+	// TODO: Encrypt password. when it works then remove from DTO
 	// TODO: Add pagination to entity collections
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions
