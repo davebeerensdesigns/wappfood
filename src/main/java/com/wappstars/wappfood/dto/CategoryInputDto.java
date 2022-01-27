@@ -1,24 +1,16 @@
 package com.wappstars.wappfood.dto;
 
-import com.wappstars.wappfood.model.Category;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.Instant;
-
+@Builder
+@Setter
+@Getter
 public class CategoryInputDto {
 
-    public String name;
-    public String slug;
-    public String description;
-
-    public Category toCategory(){
-
-        var category = new Category();
-
-        category.setName(name);
-        category.setSlug(slug);
-        category.setDescription(description);
-
-        return category;
-    }
+    private final String name;
+    private final String slug;
+    private final String description;
 
 }

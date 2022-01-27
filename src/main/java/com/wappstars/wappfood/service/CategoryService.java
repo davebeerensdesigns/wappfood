@@ -1,5 +1,6 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.dto.CategoryInputDto;
 import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
@@ -40,7 +41,7 @@ public class CategoryService {
         return category;
     }
 
-    public Category addCategory(Category category){
+    public Category addCategory(CategoryInputDto category){
         Category newCategory = new Category();
 
         newCategory.setName(
@@ -74,7 +75,7 @@ public class CategoryService {
         categoryRepository.deleteById(categoryId);
     }
 
-    public Category updateCategory(Integer categoryId, Category category) {
+    public Category updateCategory(Integer categoryId, CategoryInputDto category) {
 
         Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(Category.class, "category id", categoryId.toString()));
 

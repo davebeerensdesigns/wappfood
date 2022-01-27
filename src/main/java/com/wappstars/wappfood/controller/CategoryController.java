@@ -57,7 +57,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> addCategory(@RequestBody @Valid CategoryInputDto dto) {
         try {
-            Category savedCategory = categoryService.addCategory(dto.toCategory());
+            Category savedCategory = categoryService.addCategory(dto);
 
             CategoryDto categoryDto = categoryDtoAssembler.toModel(savedCategory)
                     .add(linkTo(methodOn(CategoryController.class).getCategories()).withRel("categories"));
@@ -73,7 +73,7 @@ public class CategoryController {
     @PutMapping("/{categoryId}")
     public ResponseEntity<?> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody @Valid CategoryInputDto dto){
 
-        Category updatedCategory = categoryService.updateCategory(categoryId, dto.toCategory());
+        Category updatedCategory = categoryService.updateCategory(categoryId, dto);
         CategoryDto categoryDto = categoryDtoAssembler.toModel(updatedCategory)
                 .add(linkTo(methodOn(CategoryController.class).getCategories()).withRel("categories"));
         return ResponseEntity

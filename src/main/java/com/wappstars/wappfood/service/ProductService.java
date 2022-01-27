@@ -1,5 +1,6 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.dto.ProductInputDto;
 import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
@@ -56,7 +57,7 @@ public class ProductService {
         return products;
     }
 
-    public Product addProduct(Product product) {
+    public Product addProduct(ProductInputDto product) {
         Product newProduct = new Product();
 
         newProduct.setName(
@@ -122,7 +123,7 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public Product updateProduct(Integer productId, Product product) {
+    public Product updateProduct(Integer productId, ProductInputDto product) {
 
         Product existingProduct = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(Product.class, "product id", productId.toString()));
 

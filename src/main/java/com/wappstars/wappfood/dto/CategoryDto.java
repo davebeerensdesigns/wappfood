@@ -14,10 +14,10 @@ import java.time.Instant;
 @Relation(itemRelation = "category", collectionRelation = "categories")
 public class CategoryDto extends RepresentationModel<CategoryDto> {
 
-    public Integer id;
-    public String name;
-    public String slug;
-    public String description;
-    public Instant dateCreated;
-    public Instant dateModified;
+    private final Integer id;
+    private final String name;
+    private final String slug;
+    private final String description;
+    private final Instant dateCreated;
+    private final Instant dateModified;
 }

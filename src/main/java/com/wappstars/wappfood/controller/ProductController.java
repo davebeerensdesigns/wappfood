@@ -52,7 +52,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestBody @Valid ProductInputDto dto) {
         try {
-            Product savedProduct = productService.addProduct(dto.toProduct());
+            Product savedProduct = productService.addProduct(dto);
 
             ProductDto productDto = productDtoAssembler.toModel(savedProduct)
                     .add(linkTo(methodOn(ProductController.class).getProducts()).withRel("products"));
@@ -68,7 +68,7 @@ public class ProductController {
     @PutMapping("/{productId}")
     public ResponseEntity<?> updateProduct(@PathVariable("productId") Integer productId, @RequestBody @Valid ProductInputDto dto){
 
-        Product updatedProduct = productService.updateProduct(productId, dto.toProduct());
+        Product updatedProduct = productService.updateProduct(productId, dto);
         ProductDto productDto = productDtoAssembler.toModel(updatedProduct)
                 .add(linkTo(methodOn(ProductController.class).getProducts()).withRel("products"));
         return ResponseEntity
