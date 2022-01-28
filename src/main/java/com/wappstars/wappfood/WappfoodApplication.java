@@ -10,8 +10,7 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-	// TODO: Use same Logic on User and Customer as i did on Product and Category
-	// TODO: Encrypt password. when it works then remove from DTO
+	// TODO: Use same Logic on Customer as i did on Product, Category and User
 	// TODO: Add pagination to entity collections
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Set the endpoint restrictions

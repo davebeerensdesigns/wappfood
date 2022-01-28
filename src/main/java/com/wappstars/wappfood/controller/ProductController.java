@@ -37,6 +37,14 @@ public class ProductController {
         return ResponseEntity.ok(productDtoAssembler.toCollectionModel(productService.getProducts()));
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<CollectionModel<ProductDto>> getProductsByCategoryId(@PathVariable("categoryId") Integer categoryId){
+        return ResponseEntity.ok(
+                productDtoAssembler.toCollectionModel(productService.getProductsByCategoryId(categoryId))
+                        .add(linkTo(methodOn(CategoryController.class).getCategory(categoryId)).withRel("category"))
+                        .add(linkTo(methodOn(CategoryController.class).getCategories()).withRel("categories")));
+    }
+
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProduct(@PathVariable("productId") Integer productId)  {
         return productService.getProduct(productId) //

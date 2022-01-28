@@ -44,7 +44,6 @@ public class ProductService {
         return product;
     }
 
-    // TODO: Create endpoint for products by category
     public List<Product> getProductsByCategoryId(Integer categoryId){
         if(!categoryRepository.existsById(categoryId)){
             throw new EntityNotFoundException(Category.class, "category id", categoryId.toString());
