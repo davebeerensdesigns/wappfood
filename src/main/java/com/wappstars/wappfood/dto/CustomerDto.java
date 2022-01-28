@@ -1,40 +1,29 @@
 package com.wappstars.wappfood.dto;
 
-import com.wappstars.wappfood.model.Customer;
-import com.wappstars.wappfood.model.CustomerMeta;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.Set;
 
-public class CustomerDto {
 
-    public int id;
-    public Instant dateCreated;
-    public Instant dateModified;
-    public String firstName;
-    public String lastName;
-    public String email;
-    public Boolean isPayingCustomer;
-    public String username;
-    public Map<String, String> billing;
-    public Map<String, String> shipping;
+@Builder
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@Relation(itemRelation = "customer", collectionRelation = "customers")
+public class CustomerDto extends RepresentationModel<CustomerDto> {
 
-    public static CustomerDto fromCustomer(Customer customer){
-
-        var dto = new CustomerDto();
-
-        dto.id = customer.getId();
-        dto.dateCreated = customer.getDateCreated();
-        dto.dateModified = customer.getDateModified();
-        dto.firstName = customer.getFirstName();
-        dto.lastName = customer.getLastName();
-        dto.email = customer.getEmail();
-        dto.isPayingCustomer = customer.isPayingCustomer();
-        dto.username = customer.getUsername();
-        dto.billing = customer.getBilling();
-        dto.shipping = customer.getShipping();
-
-        return dto;
-    }
+    private final int id;
+    private final Instant dateCreated;
+    private final Instant dateModified;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final Boolean isPayingCustomer;
+    private final String username;
+    private final Map<String, String> billing;
+    private final Map<String, String> shipping;
 }

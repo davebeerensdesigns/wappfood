@@ -1,24 +1,18 @@
 package com.wappstars.wappfood.dto;
 
-import com.wappstars.wappfood.model.Customer;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Builder
+@Setter
+@Getter
 public class CustomerInputDto {
 
-    public String firstName;
-    public String lastName;
-    public String email;
-    public String username;
-
-    public Customer toCustomer() {
-
-        Customer customer = new Customer();
-
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setUsername(username);
-
-        return customer;
-    }
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final String username;
+    private final boolean isPayingCustomer;
 
 }

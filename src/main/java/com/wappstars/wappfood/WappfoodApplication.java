@@ -11,6 +11,7 @@ public class WappfoodApplication {
 	}
 
 	// TODO: Use same Logic on Customer as i did on Product, Category and User
+	// TODO: Make function for set/check username and email for UserService and CustomerService
 	// TODO: Add pagination to entity collections
 	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Use role-based access policies on API-endpoints and double check capabilities for roles

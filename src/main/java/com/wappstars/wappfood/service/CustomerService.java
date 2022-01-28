@@ -1,5 +1,8 @@
 package com.wappstars.wappfood.service;
 
+import com.wappstars.wappfood.controller.CustomerController;
+import com.wappstars.wappfood.dto.CustomerInputDto;
+import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.*;
 import com.wappstars.wappfood.repository.CustomerMetaRepository;
@@ -16,14 +19,16 @@ import java.util.*;
 @Service
 public class CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final CustomerMetaRepository customerMetaRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CustomerMetaRepository customerMetaRepository;
+    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository, CustomerMetaRepository customerMetaRepository){
+        this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
+        this.customerMetaRepository = customerMetaRepository;
+    }
 
     public List<Customer> getCustomers() {
         List<Customer> customers = customerRepository.findAll();
@@ -33,64 +38,99 @@ public class CustomerService {
         return customers;
     }
 
-    public Customer getCustomer(Integer customerId) {
-        return customerRepository
-                .findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException(Customer.class, "id", customerId.toString()));
+    public Optional<Customer> getCustomer(Integer customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if(customer.isEmpty()){
+            throw new EntityNotFoundException(User.class, "customer id", customerId.toString());
+        }
+        return customer;
     }
 
     public boolean customerIdExists(Integer customerId) {
         return customerRepository.existsById(customerId);
     }
+    public boolean customerEmailExists(String customerEmail) {
+        return customerRepository.existsByEmail(customerEmail);
+    }
+    public boolean userIdExists(String username) {
+        return userRepository.existsById(username);
+    }
 
-    public Integer createCustomer(Customer customer) {
-        if(customer.getUsername() != null){
-            if(!userRepository.existsById(customer.getUsername())){
-                throw new EntityNotFoundException(User.class, "username", customer.getUsername());
+    public Customer addCustomer(CustomerInputDto customer) {
+
+        Customer newCustomer = new Customer();
+
+        if(customer.getUsername() != null) {
+            String username = HtmlToTextResolver.HtmlToText(customer.getUsername());
+            if (!userIdExists(username)) {
+                throw new EntityNotFoundException(User.class, "username", username);
+            } else {
+                newCustomer.setUsername(username);
             }
         }
 
-        customerRepository.save(customer);
+        String email = HtmlToTextResolver.HtmlToText(customer.getEmail());
+        if(!ValidMetaData.isValidEmail(email)){
+            throw new IllegalArgumentException("Please enter a valid email address");
+        } else if (customerEmailExists(email)) {
+                throw new EntityExistsException(Customer.class, "email", email);
+        } else {
+            newCustomer.setEmail(email);
+        }
 
-        return customer.getId();
+        if(customer.getFirstName() != null) {
+            newCustomer.setFirstName(HtmlToTextResolver.HtmlToText(customer.getFirstName()));
+        }
+        if(customer.getLastName() != null) {
+            newCustomer.setLastName(HtmlToTextResolver.HtmlToText(customer.getLastName()));
+        }
+
+        return customerRepository.save(newCustomer);
     }
 
     public void deleteCustomer(Integer customerId) {
-        if(!customerRepository.existsById(customerId)){
-            throw new EntityNotFoundException(Customer.class, "id", customerId.toString());
-        }
+        if(!customerRepository.existsById(customerId)) throw new EntityNotFoundException(Customer.class, "id", customerId.toString());
+
         customerRepository.deleteById(customerId);
     }
 
-    public void updateCustomer(Integer customerId, Customer newCustomer) {
-        if(!customerRepository.existsById(customerId)){
-            throw new EntityNotFoundException(Customer.class, "customer id", customerId.toString());
-        }
+    public Customer updateCustomer(Integer customerId, CustomerInputDto newCustomer) {
 
-        Customer customer = customerRepository.findById(customerId).orElse(null);
-
-        if(newCustomer.getFirstName() != null){
-            customer.setFirstName(newCustomer.getFirstName());
-        }
-
-        if(newCustomer.getLastName() != null){
-            customer.setLastName(newCustomer.getLastName());
-        }
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException(Customer.class, "customer id", customerId.toString()));
 
         if(newCustomer.getEmail() != null){
-            customer.setEmail(newCustomer.getEmail());
-        }
-
-        customer.setPayingCustomer((newCustomer.isPayingCustomer()) ? true : false);
-
-        if(newCustomer.getUsername() != null){
-            if(!userRepository.existsById(newCustomer.getUsername())){
-                throw new EntityNotFoundException(User.class, "username", newCustomer.getUsername());
+            String email = HtmlToTextResolver.HtmlToText(newCustomer.getEmail());
+            if(!ValidMetaData.isValidEmail(email)){
+                throw new IllegalArgumentException("Please enter a valid email address");
+            } else if (!email.equals(customer.getEmail())){
+                if (customerEmailExists(email)) {
+                    throw new EntityExistsException(Customer.class, "email", email);
+                } else {
+                    customer.setEmail(email);
+                }
             }
-            customer.setUsername(newCustomer.getUsername());
         }
 
-        customerRepository.save(customer);
+        if(newCustomer.getUsername() != null) {
+            if (!customer.getUsername().equals(customer.getUsername())){
+                if (!userIdExists(customer.getUsername())) {
+                    throw new EntityNotFoundException(User.class, "username", customer.getUsername());
+                } else {
+                    customer.setUsername(newCustomer.getUsername());
+                }
+            }
+        }
+
+        if(newCustomer.getFirstName() != null) {
+            customer.setFirstName(HtmlToTextResolver.HtmlToText(newCustomer.getFirstName()));
+        }
+        if(newCustomer.getLastName() != null) {
+            customer.setLastName(HtmlToTextResolver.HtmlToText(newCustomer.getLastName()));
+        }
+
+        customer.setPayingCustomer((newCustomer.isPayingCustomer() == true) ? true : false);
+
+        return customerRepository.save(customer);
     }
 
 
@@ -99,7 +139,7 @@ public class CustomerService {
     public List<CustomerMeta> getCustomerMetas(Integer customerId) {
         List<CustomerMeta> customerMetas = customerMetaRepository.findByCustomerId(customerId);
         if(customerMetas.isEmpty()){
-            throw new EntityNotFoundException(CustomerMeta.class);
+            throw new EntityNotFoundException(CustomerMeta.class, "customer_id", customerId.toString());
         }
         return customerMetas;
     }

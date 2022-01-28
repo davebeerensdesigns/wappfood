@@ -1,17 +1,25 @@
 package com.wappstars.wappfood.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import com.wappstars.wappfood.assembler.CustomerDtoAssembler;
 import com.wappstars.wappfood.dto.CustomerDto;
 import com.wappstars.wappfood.dto.CustomerInputDto;
+import com.wappstars.wappfood.dto.UserDto;
 import com.wappstars.wappfood.model.Customer;
 import com.wappstars.wappfood.model.CustomerMeta;
+import com.wappstars.wappfood.model.User;
 import com.wappstars.wappfood.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,53 +29,59 @@ import java.util.Map;
 @RequestMapping(value = "/wp-json/wf/v1/customers")
 public class CustomerController {
 
-    private CustomerService customerService;
+    private final CustomerService customerService;
+    private final CustomerDtoAssembler customerDtoAssembler;
 
     @Autowired
-    public CustomerController(CustomerService customerService){
+    public CustomerController(CustomerService customerService, CustomerDtoAssembler customerDtoAssembler){
         this.customerService = customerService;
+        this.customerDtoAssembler = customerDtoAssembler;
     }
 
     @GetMapping
-    public ResponseEntity<Object> getCustomers() {
-        var dtos = new ArrayList<CustomerDto>();
-        List<Customer> customers = customerService.getCustomers();
-
-        for (Customer customer : customers) {
-            dtos.add(CustomerDto.fromCustomer(customer));
-        }
-
-        return ResponseEntity.ok().body(dtos);
+    public ResponseEntity<CollectionModel<CustomerDto>> getCustomers(){
+        return ResponseEntity.ok(customerDtoAssembler.toCollectionModel(customerService.getCustomers()));
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<Object> getCustomer(@PathVariable("customerId") Integer customerId)  {
-        Customer customer = customerService.getCustomer(customerId);
-        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+    public ResponseEntity<CustomerDto> getCustomer(@PathVariable("customerId") Integer customerId)  {
+        return customerService.getCustomer(customerId) //
+                .map(customer -> {
+                    CustomerDto customerDto = customerDtoAssembler.toModel(customer)
+                            .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
+
+                    return ResponseEntity.ok(customerDto);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Object> createCustomer(@RequestBody @Valid CustomerInputDto dto) {
-        Integer newCustomer = customerService.createCustomer(dto.toCustomer());
+    public ResponseEntity<?> addCustomer(@RequestBody @Valid CustomerInputDto dto) {
+        try {
+            Customer savedCustomer = customerService.addCustomer(dto);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{customerId}")
-                .buildAndExpand(newCustomer).toUri();
+            CustomerDto customerDto = customerDtoAssembler.toModel(savedCustomer)
+                    .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity //
+                    .created(new URI(customerDto.getRequiredLink(IanaLinkRelations.SELF).getHref()))
+                    .body(customerDto);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.badRequest().body("Unable to create customer");
+        }
     }
 
     @PutMapping(value = "/{customerId}")
-    public ResponseEntity<Object> updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody @Valid CustomerInputDto dto) {
-        customerService.updateCustomer(customerId, dto.toCustomer());
+    public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody @Valid CustomerInputDto dto) {
+        Customer updatedCustomer = customerService.updateCustomer(customerId, dto);
+        CustomerDto customerDto = customerDtoAssembler.toModel(updatedCustomer)
+                .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .buildAndExpand(customerId).toUri();
-
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.ok(customerDto);
     }
 
     @DeleteMapping(value = "/{customerId}")
-    public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") Integer customerId) {
+    public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") Integer customerId) {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
     }
@@ -84,39 +98,55 @@ public class CustomerController {
     public ResponseEntity<Object> addCustomerBilling(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
 
         Customer customer = customerService.addCustomerMeta(customerId, metaData, "billing");
-        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+
+        CustomerDto customerDto = customerDtoAssembler.toModel(customer)
+                .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
+
+        return ResponseEntity.ok(customerDto);
     }
 
     @PostMapping("/{customerId}/shipping")
     public ResponseEntity<Object> addCustomerShipping(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
 
         Customer customer = customerService.addCustomerMeta(customerId, metaData, "shipping");
-        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+
+        CustomerDto customerDto = customerDtoAssembler.toModel(customer)
+                .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
+
+        return ResponseEntity.ok(customerDto);
     }
 
     @PutMapping("/{customerId}/billing")
     public ResponseEntity<Object> updateCustomerBilling(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
 
         Customer customer = customerService.updateCustomerMeta(customerId, metaData, "billing");
-        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+
+        CustomerDto customerDto = customerDtoAssembler.toModel(customer)
+                .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
+
+        return ResponseEntity.ok(customerDto);
     }
 
     @PutMapping("/{customerId}/shipping")
     public ResponseEntity<Object> updateCustomerShipping(@PathVariable("customerId") Integer customerId, @RequestBody @Valid Map<String, String> metaData) {
 
         Customer customer = customerService.updateCustomerMeta(customerId, metaData, "shipping");
-        return ResponseEntity.ok().body(CustomerDto.fromCustomer(customer));
+
+        CustomerDto customerDto = customerDtoAssembler.toModel(customer)
+                .add(linkTo(methodOn(CustomerController.class).getCustomers()).withRel("customers"));
+
+        return ResponseEntity.ok(customerDto);
     }
 
     @DeleteMapping("/{customerId}/metadata")
-    public ResponseEntity<Object> deleteCustomerMetas(@PathVariable("customerId") Integer customerId, @RequestBody @Valid ArrayList<String> metaData) {
+    public ResponseEntity<?> deleteCustomerMetas(@PathVariable("customerId") Integer customerId, @RequestBody @Valid ArrayList<String> metaData) {
 
         customerService.removeCustomerMeta(customerId, metaData);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{customerId}/all/metadata")
-    public ResponseEntity<Object> deleteCustomerMetas(@PathVariable("customerId") Integer customerId) {
+    public ResponseEntity<?> deleteCustomerMetas(@PathVariable("customerId") Integer customerId) {
 
         customerService.removeAllCustomerMeta(customerId);
         return ResponseEntity.noContent().build();
