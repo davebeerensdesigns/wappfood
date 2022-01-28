@@ -1,16 +1,18 @@
 package com.wappstars.wappfood.service;
 
-import com.wappstars.wappfood.dto.UserDto;
 import com.wappstars.wappfood.dto.UserInputDto;
 import com.wappstars.wappfood.exception.*;
 import com.wappstars.wappfood.model.Authority;
 import com.wappstars.wappfood.model.Customer;
-import com.wappstars.wappfood.model.Product;
 import com.wappstars.wappfood.model.User;
 import com.wappstars.wappfood.repository.CustomerRepository;
 import com.wappstars.wappfood.repository.UserRepository;
+import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.util.RandomStringGenerator;
+import com.wappstars.wappfood.validators.ValidMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
@@ -35,7 +37,7 @@ public class UserService {
     public Optional<User> getUser(String username) {
         Optional<User> user = userRepository.findById(username);
         if(user.isEmpty()){
-            throw new EntityNotFoundException(Product.class, "user id", username);
+            throw new EntityNotFoundException(User.class, "user id", username);
         }
         return user;
     }
@@ -48,16 +50,28 @@ public class UserService {
     }
 
     public User addUser(UserInputDto user) {
-        if (userRepository.existsById(user.getUsername())) throw new EntityExistsException(User.class, "username", user.getUsername());
-        if (userRepository.existsByEmail(user.getEmail())) throw new EntityExistsException(User.class, "email", user.getEmail());
+        if (userIdExists(user.getUsername())) throw new EntityExistsException(User.class, "username", user.getUsername());
+        if (userEmailExists(user.getEmail())) throw new EntityExistsException(User.class, "email", user.getEmail());
 
         User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setEmail(user.getEmail());
+
+        newUser.setUsername(HtmlToTextResolver.HtmlToText(user.getUsername()));
+
+        String email = HtmlToTextResolver.HtmlToText(user.getEmail());
+        if(!ValidMetaData.isValidEmail(email)){
+            throw new IllegalArgumentException("Please enter a valid email address");
+        } else {
+            newUser.setEmail(email);
+        }
+
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         newUser.setApikey(randomString);
-        newUser.setPassword(user.getPassword());
+
+        String password = new BCryptPasswordEncoder().encode(user.getPassword());
+        newUser.setPassword(password);
+
         newUser.addAuthority(new Authority(user.getUsername(), Authority.UserRoles.DEFAULT.toString()));
+
         return userRepository.save(newUser);
     }
 
@@ -75,19 +89,21 @@ public class UserService {
 
     public User updateUser(String username, UserInputDto newUser) {
 
-        if(!userRepository.existsById(username)){
-            throw new EntityNotFoundException(User.class, "username", username);
-        }
+        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException(User.class, "username", username));
 
-        User user = userRepository.findById(username).orElse(null);
-
-        if(newUser.getEmail() != null){
+        if(newUser.getEmail() != null && !newUser.getEmail().equals(user.getEmail())){
             if (userRepository.existsByEmail(user.getEmail())) throw new EntityExistsException(User.class, "email", user.getEmail());
-            user.setEmail(newUser.getEmail());
+            String email = HtmlToTextResolver.HtmlToText(newUser.getEmail());
+            if(!ValidMetaData.isValidEmail(email)){
+                throw new IllegalArgumentException("Please enter a valid email address");
+            } else {
+                user.setEmail(email);
+            }
         }
 
         if(newUser.getPassword() != null) {
-            user.setPassword(newUser.getPassword());
+            String password = new BCryptPasswordEncoder().encode(newUser.getPassword());
+            user.setPassword(password);
         }
         return userRepository.save(user);
     }
