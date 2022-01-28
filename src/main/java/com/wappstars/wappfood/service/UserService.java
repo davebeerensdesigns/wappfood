@@ -50,16 +50,21 @@ public class UserService {
     }
 
     public User addUser(UserInputDto user) {
-        if (userIdExists(user.getUsername())) throw new EntityExistsException(User.class, "username", user.getUsername());
-        if (userEmailExists(user.getEmail())) throw new EntityExistsException(User.class, "email", user.getEmail());
 
         User newUser = new User();
 
-        newUser.setUsername(HtmlToTextResolver.HtmlToText(user.getUsername()));
+        String username = HtmlToTextResolver.HtmlToText(user.getUsername());
+        if (!userIdExists(username)) {
+            throw new EntityNotFoundException(User.class, "username", username);
+        } else {
+            newUser.setUsername(username);
+        }
 
         String email = HtmlToTextResolver.HtmlToText(user.getEmail());
         if(!ValidMetaData.isValidEmail(email)){
             throw new IllegalArgumentException("Please enter a valid email address");
+        } else if (userEmailExists(email)) {
+            throw new EntityExistsException(Customer.class, "email", email);
         } else {
             newUser.setEmail(email);
         }
@@ -91,13 +96,16 @@ public class UserService {
 
         User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException(User.class, "username", username));
 
-        if(newUser.getEmail() != null && !newUser.getEmail().equals(user.getEmail())){
-            if (userRepository.existsByEmail(user.getEmail())) throw new EntityExistsException(User.class, "email", user.getEmail());
+        if(newUser.getEmail() != null){
             String email = HtmlToTextResolver.HtmlToText(newUser.getEmail());
             if(!ValidMetaData.isValidEmail(email)){
                 throw new IllegalArgumentException("Please enter a valid email address");
-            } else {
-                user.setEmail(email);
+            } else if (!email.equals(user.getEmail())){
+                if (userEmailExists(email)) {
+                    throw new EntityExistsException(User.class, "email", email);
+                } else {
+                    user.setEmail(email);
+                }
             }
         }
 

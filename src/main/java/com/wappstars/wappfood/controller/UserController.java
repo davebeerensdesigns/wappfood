@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid UserInputDto dto) {
+    public ResponseEntity<?> addUser(@RequestBody @Valid UserInputDto dto) {
         try {
             User savedUser = userService.addUser(dto);
 
