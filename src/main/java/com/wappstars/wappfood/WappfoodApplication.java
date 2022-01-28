@@ -13,7 +13,8 @@ public class WappfoodApplication {
 	// TODO: Use same Logic on Customer as i did on Product, Category and User
 	// TODO: Add pagination to entity collections
 	// TODO: Make all exceptions use the ApiError Class
-	// TODO: Set the endpoint restrictions
+	// TODO: Use role-based access policies on API-endpoints and double check capabilities for roles
+	// TODO: Exception for adding already existing user role
 	// TODO: Create remove and update for customer meta data
 	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
 	// TODO: Add modified by user. (maybe last login date)

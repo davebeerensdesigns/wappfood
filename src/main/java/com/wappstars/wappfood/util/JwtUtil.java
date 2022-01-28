@@ -20,7 +20,9 @@ public class JwtUtil {
     private String SECRET;
 
     // TODO: Make exception when token expired
-    public static final long EXPIRATION_TIME = 900_000_000; // 15 mins
+    public static final long EXPIRATION_TIME = 604_800_000; // 1 week
+    //public static final long EXPIRATION_TIME = 3_600_000; // 1 hour
+    //public static final long EXPIRATION_TIME = 900_000; // 15 mins
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

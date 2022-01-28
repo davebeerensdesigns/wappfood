@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -45,21 +47,53 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        //JWT token authentication
-        http
-                .csrf().disable()
-//                .cors().and()
-                .authorizeRequests()
+        // Enable CORS and disable CSRF
+        http = http.cors().and().csrf().disable();
+
+        // Set session management to stateless
+        http = http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and();
+
+        // Set unauthorized requests exception handler
+        http = http
+                .exceptionHandling()
+                .authenticationEntryPoint(
+                        (request, response, ex) -> {
+                            response.sendError(
+                                    HttpServletResponse.SC_UNAUTHORIZED,
+                                    ex.getMessage()
+                            );
+                        }
+                )
+                .and();
+
+        // Set permissions on endpoints
+        http.authorizeRequests()
+                // Our public endpoints
+                .antMatchers(HttpMethod.POST,"/wp-json/wf/v1/authenticate").permitAll()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/authenticated").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/products").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/categories").permitAll()
-                .antMatchers("/wp-json/wf/v1/users").hasRole("ADMIN")
-                .antMatchers("/wp-json/wf/v1/authenticated").authenticated()
-                .antMatchers("/wp-json/wf/v1/authenticate").permitAll()
-                .anyRequest().permitAll()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                // Our private endpoints
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/authenticated").authenticated()
+                .antMatchers("/wp-json/wf/v1/users/*/authorities").hasRole("ADMIN")
+                .antMatchers("/wp-json/wf/v1/users").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/products").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/categories").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/customers").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
+                .antMatchers("/wp-json/wf/v1/customers").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/orders").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
+                .antMatchers(HttpMethod.PATCH,"/wp-json/wf/v1/orders/*/status").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
+                .antMatchers("/wp-json/wf/v1/orders").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .anyRequest().authenticated();
+
+        // Add JWT token filter
+        http.addFilterBefore(
+                jwtRequestFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
 
     }
 
