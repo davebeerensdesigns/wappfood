@@ -10,13 +10,9 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-	// TODO: Use same Logic on Customer as i did on Product, Category and User
-	// TODO: Make function for set/check username and email for UserService and CustomerService
-	// TODO: Add pagination to entity collections
-	// TODO: Make all exceptions use the ApiError Class
 	// TODO: Use role-based access policies on API-endpoints and double check capabilities for roles
+	// TODO: Maybe change endpoints to seperate data more (public/admin)
 	// TODO: Exception for adding already existing user role
-	// TODO: Create remove and update for customer meta data
 	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
 	// TODO: Add modified by user. (maybe last login date)
 	// TODO: Add image upload to product, category and user
