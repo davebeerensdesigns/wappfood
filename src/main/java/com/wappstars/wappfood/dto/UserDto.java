@@ -17,13 +17,12 @@ import java.util.Set;
 @Relation(itemRelation = "user", collectionRelation = "users")
 public class UserDto extends RepresentationModel<UserDto> {
 
-    public String username;
-    public Instant dateCreated;
-    public Instant dateModified;
-    public String email;
-    public String password;
-    public Boolean enabled;
-    public String apikey;
+    private final String username;
+    private final String email;
+    private final Instant dateCreated;
+    private final Instant dateModified;
+    private final Boolean enabled;
+    private final String apikey;
     @JsonSerialize
-    public Set<Authority> authorities;
+    private final Set<Authority> authorities;
 }

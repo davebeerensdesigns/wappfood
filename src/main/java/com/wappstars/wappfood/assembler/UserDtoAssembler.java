@@ -18,7 +18,6 @@ public class UserDtoAssembler implements RepresentationModelAssembler<User, User
                 .dateCreated(entity.getDateCreated())
                 .dateModified(entity.getDateModified())
                 .email(entity.getEmail())
-                .password(entity.getPassword())
                 .enabled(entity.isEnabled())
                 .apikey(entity.getApikey())
                 .authorities(entity.getAuthorities())
