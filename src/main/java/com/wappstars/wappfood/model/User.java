@@ -1,7 +1,5 @@
 package com.wappstars.wappfood.model;
 
-import com.wappstars.wappfood.shared.BaseCreatedEntity;
-import com.wappstars.wappfood.shared.BaseIdEntity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
