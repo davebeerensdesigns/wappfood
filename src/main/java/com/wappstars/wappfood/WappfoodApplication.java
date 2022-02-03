@@ -21,5 +21,6 @@ public class WappfoodApplication {
 	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
 	// TODO: Add modified by user. (maybe last login date)
 	// TODO: Create tests for current code (product, category, exceptions)
-	// TODO: Build the rest of the application after above is finished (Cart, Tax, TaxClass,ShippingMethods, ShippingZones, PaymentGateway, Order, LineItems, ActionScheduler)
+	// TODO: Add Billing and Shipping Meta data to Order
+	// TODO: Use same function to Billing and Shipping on Customer Meta and Order Meta
 }
