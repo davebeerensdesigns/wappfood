@@ -20,7 +20,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "customer", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "customer_email_unique", columnNames = "email")})
-public class Customer extends RepresentationModel<User> {
+public class Customer extends RepresentationModel<Customer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
