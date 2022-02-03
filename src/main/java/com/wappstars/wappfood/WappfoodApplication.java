@@ -20,8 +20,6 @@ public class WappfoodApplication {
 	// TODO: Exception for adding already existing user role
 	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
 	// TODO: Add modified by user. (maybe last login date)
-	// TODO: Create file uploader/downloader
-	// TODO: Add image upload to product, category and user
 	// TODO: Create tests for current code (product, category, exceptions)
 	// TODO: Build the rest of the application after above is finished (Cart, Tax, TaxClass,ShippingMethods, ShippingZones, PaymentGateway, Order, LineItems, ActionScheduler)
 }

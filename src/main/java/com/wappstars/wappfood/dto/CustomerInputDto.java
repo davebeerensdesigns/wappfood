@@ -1,18 +1,18 @@
 package com.wappstars.wappfood.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomerInputDto {
 
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final String username;
-    private final boolean isPayingCustomer;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String username;
+    private boolean isPayingCustomer;
 
 }
