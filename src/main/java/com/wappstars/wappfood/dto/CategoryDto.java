@@ -18,6 +18,7 @@ public class CategoryDto extends RepresentationModel<CategoryDto> {
     private final String name;
     private final String slug;
     private final String description;
+    private final String image;
     private final Instant dateCreated;
     private final Instant dateModified;
 }

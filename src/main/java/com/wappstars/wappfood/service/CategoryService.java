@@ -66,6 +66,10 @@ public class CategoryService {
                 )
         );
 
+        newCategory.setImage(
+                category.getImage()
+        );
+
         return categoryRepository.save(newCategory);
     }
 
@@ -107,6 +111,11 @@ public class CategoryService {
                     )
             );
         }
+
+        if(category.getImage() != null)
+        existingCategory.setImage(
+                category.getImage()
+        );
 
         return categoryRepository.save(existingCategory);
     }

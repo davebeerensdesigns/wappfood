@@ -11,6 +11,7 @@ import com.wappstars.wappfood.config.FileUploadProperties;
 import com.wappstars.wappfood.exception.FileNotFoundException;
 import com.wappstars.wappfood.exception.FileStorageException;
 import com.wappstars.wappfood.exception.FileTypeException;
+import com.wappstars.wappfood.repository.IFileSystemStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,7 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class FileSystemStorageService implements IFileSytemStorage {
+public class FileSystemStorageService implements IFileSystemStorage {
     private final Path dirLocation;
     @Autowired
     public FileSystemStorageService(FileUploadProperties fileUploadProperties) {

@@ -3,6 +3,7 @@ package com.wappstars.wappfood.model;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -62,6 +63,9 @@ public class Product extends RepresentationModel<Product> {
     @Column(nullable = false)
     @Size(max = 25)
     private String taxClass;
+
+    @URL
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "category_id_fk"), name = "category_id")

@@ -20,6 +20,7 @@ public class CategoryDtoAssembler implements RepresentationModelAssembler<Catego
                 .name(entity.getName())
                 .slug(entity.getSlug())
                 .description(entity.getDescription())
+                .image(entity.getImage())
                 .dateCreated(entity.getDateCreated())
                 .dateModified(entity.getDateModified())
                 .build();

@@ -1,7 +1,7 @@
 package com.wappstars.wappfood.controller;
 
 import com.wappstars.wappfood.model.FileResponse;
-import com.wappstars.wappfood.service.IFileSytemStorage;
+import com.wappstars.wappfood.repository.IFileSystemStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/wp-json/wf/v1/media")
 public class FileController {
     @Autowired
-    IFileSytemStorage fileSytemStorage;
+    IFileSystemStorage fileSytemStorage;
 
     @GetMapping(value = "/download/{filename:.+}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {

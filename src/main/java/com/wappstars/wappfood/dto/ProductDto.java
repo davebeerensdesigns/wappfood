@@ -27,5 +27,6 @@ public class ProductDto extends RepresentationModel<ProductDto> {
     private final Integer stockQty;
     private final boolean taxable;
     private final String taxClass;
+    private final String image;
     private final TreeMap<String, String> category;
 }

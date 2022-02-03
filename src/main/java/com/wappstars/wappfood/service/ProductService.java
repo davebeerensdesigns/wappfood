@@ -99,6 +99,9 @@ public class ProductService {
         newProduct.setTaxClass(
                 product.getTaxClass()
         );
+        newProduct.setImage(
+                product.getImage()
+        );
 
         Integer prodCatId = product.getCategory().getId();
         if(!categoryRepository.existsById(prodCatId)){
@@ -184,6 +187,11 @@ public class ProductService {
         if(product.getTaxClass() != null)
         existingProduct.setTaxClass(
                 product.getTaxClass()
+        );
+
+        if(product.getImage() != null)
+            existingProduct.setImage(
+                product.getImage()
         );
 
         if(product.getCategory().getId() != null) {

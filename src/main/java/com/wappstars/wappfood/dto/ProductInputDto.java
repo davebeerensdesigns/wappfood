@@ -17,6 +17,7 @@ public class ProductInputDto {
     private final Integer stockQty;
     private final boolean taxable;
     private final String taxClass;
+    private final String image;
     private final Category category;
 
 }

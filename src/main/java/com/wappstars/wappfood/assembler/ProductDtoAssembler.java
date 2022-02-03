@@ -34,6 +34,7 @@ public class ProductDtoAssembler implements RepresentationModelAssembler<Product
                 .stockQty(entity.getStockQty())
                 .taxable(entity.isTaxable())
                 .taxClass(entity.getTaxClass())
+                .image(entity.getImage())
                 .category(category)
                 .build();
 

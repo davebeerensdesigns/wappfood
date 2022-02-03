@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -44,6 +45,9 @@ public class Category extends RepresentationModel<Category> {
 
     @Size(max = 255)
     private String description;
+
+    @URL
+    private String image;
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore
