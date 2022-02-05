@@ -3,7 +3,9 @@ package com.wappstars.wappfood.controller;
 import com.wappstars.wappfood.assembler.OrderDtoAssembler;
 import com.wappstars.wappfood.dto.OrderInputDto;
 import com.wappstars.wappfood.dto.OrderDto;
+import com.wappstars.wappfood.dto.ProductDto;
 import com.wappstars.wappfood.model.Order;
+import com.wappstars.wappfood.model.Product;
 import com.wappstars.wappfood.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -68,5 +70,23 @@ public class OrderController {
         } catch (URISyntaxException e) {
             return ResponseEntity.badRequest().body("Unable to create order");
         }
+    }
+
+    @PatchMapping("/{orderId}/payed")
+    public ResponseEntity<OrderDto> setOrderPayed(@PathVariable("orderId") Integer orderId){
+        Order updatedOrder = orderService.setOrderPayed(orderId);
+        OrderDto orderDto = orderDtoAssembler.toModel(updatedOrder)
+                .add(linkTo(methodOn(OrderController.class).getOrders()).withRel("orders"));
+        return ResponseEntity
+                .ok(orderDto);
+    }
+
+    @PatchMapping("/{orderId}/status/{orderStatus}")
+    public ResponseEntity<OrderDto> setOrderPayed(@PathVariable("orderId") Integer orderId, @PathVariable("orderStatus") Order.OrderStatus orderStatus){
+        Order updatedOrder = orderService.setOrderStatus(orderId, orderStatus);
+        OrderDto orderDto = orderDtoAssembler.toModel(updatedOrder)
+                .add(linkTo(methodOn(OrderController.class).getOrders()).withRel("orders"));
+        return ResponseEntity
+                .ok(orderDto);
     }
 }

@@ -302,7 +302,7 @@ public class OrderService {
                 customerInputDto.setUsername(user.getUsername());
             }
 
-            if(dto.getOrderIsPayed() == true){
+            if(dto.getOrderIsPayed() != null && dto.getOrderIsPayed() == true){
                 customerInputDto.setPayingCustomer(true);
             }
             Customer newCustomer = customerService.addCustomer(customerInputDto);
@@ -327,4 +327,26 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+
+    public Order setOrderPayed(Integer orderId) {
+        Order order = orderRepository.getById(orderId);
+        if(order != null) {
+            order.setOrderIsPayed(true);
+            order.setOrderStatus(Order.OrderStatus.PROCESSING);
+        } else {
+            throw new EntityNotFoundException(Order.class, "order id", orderId.toString());
+        }
+        return orderRepository.save(order);
+    }
+
+
+    public Order setOrderStatus(Integer orderId, Order.OrderStatus orderStatus) {
+        Order order = orderRepository.getById(orderId);
+        if(order != null) {
+            order.setOrderStatus(orderStatus);
+        } else {
+            throw new EntityNotFoundException(Order.class, "order id", orderId.toString());
+        }
+        return orderRepository.save(order);
+    }
 }
