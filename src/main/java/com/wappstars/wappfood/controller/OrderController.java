@@ -55,7 +55,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addOrder(@RequestBody OrderInputDto dto) {
+    public ResponseEntity<?> addOrder(@RequestBody @Valid OrderInputDto dto) {
         try {
             Order savedOrder = orderService.addOrder(dto);
 

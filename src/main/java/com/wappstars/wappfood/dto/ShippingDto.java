@@ -11,11 +11,11 @@ import lombok.*;
 
 public class ShippingDto {
 
-    private String firstName;
-    private String lastName;
+    private String company;
     private String address;
     private String city;
     private String state;
     private String postcode;
+    private String country;
 
 }

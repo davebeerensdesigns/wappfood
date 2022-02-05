@@ -13,10 +13,12 @@ public class BillingDto {
 
     private String firstName;
     private String lastName;
+    private String company;
     private String address;
     private String city;
     private String state;
     private String postcode;
+    private String country;
     private String email;
     private String phone;
 

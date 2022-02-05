@@ -16,9 +16,13 @@ public class OrderDtoAssembler implements RepresentationModelAssembler<Order, Or
         OrderDto orderDto = OrderDto.builder()
                 .id(entity.getId())
                 .customerId(entity.getCustomerId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
                 .dateCreated(entity.getDateCreated())
                 .dateModified(entity.getDateModified())
                 .totalPrice(entity.getTotalPrice())
+                .billing(entity.getBilling())
+                .shipping(entity.getShipping())
                 .lineItems(entity.getLineItems())
                 .build();
 
