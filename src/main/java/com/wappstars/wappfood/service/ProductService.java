@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: Run validations on product
-
 @Service
 public class ProductService {
 
@@ -178,11 +176,9 @@ public class ProductService {
                 product.getStockQty()
         );
 
-        if(product.isTaxable() == true) {
-            existingProduct.setTaxable(true);
-        } else if(product.isTaxable() == true){
-            existingProduct.setTaxable(false);
-        }
+        existingProduct.setTaxable(
+                product.isTaxable()
+        );
 
         if(product.getTaxClass() != null)
         existingProduct.setTaxClass(

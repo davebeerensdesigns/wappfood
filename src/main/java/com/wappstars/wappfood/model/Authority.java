@@ -2,8 +2,6 @@ package com.wappstars.wappfood.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @IdClass(com.wappstars.wappfood.model.AuthorityKey.class)

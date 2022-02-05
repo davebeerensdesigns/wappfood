@@ -12,7 +12,6 @@ import com.wappstars.wappfood.util.RandomStringGenerator;
 import com.wappstars.wappfood.validators.ValidMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
@@ -20,11 +19,14 @@ import java.util.*;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    public UserService(UserRepository userRepository, CustomerRepository customerRepository){
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+    }
 
     public List<User> getUsers() {
         List<User> users = userRepository.findAll();
@@ -54,8 +56,8 @@ public class UserService {
         User newUser = new User();
 
         String username = HtmlToTextResolver.HtmlToText(user.getUsername());
-        if (!userIdExists(username)) {
-            throw new EntityNotFoundException(User.class, "username", username);
+        if (userIdExists(username)) {
+            throw new EntityExistsException(User.class, "username", username);
         } else {
             newUser.setUsername(username);
         }
@@ -117,17 +119,21 @@ public class UserService {
     }
 
     public Set<Authority> getUserAuthorities(String username) {
-        if (!userRepository.existsById(username)) throw new EntityNotFoundException(User.class, "username", username);
-        User user = userRepository.findById(username).get();
+        User user = userRepository.findById(username).orElseThrow(
+                () -> new EntityNotFoundException(User.class, "username", username)
+        );
         return user.getAuthorities();
     }
 
     public void addAuthority(String username, String authority) {
-        if (!userRepository.existsById(username)) throw new EntityNotFoundException(User.class, "username", username);
+
+        User user = userRepository.findById(username).orElseThrow(
+                () -> new EntityNotFoundException(User.class, "username", username)
+        );
 
         String foundRole = null;
         String searchedValue = authority;
-        ArrayList<String> values = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<>();
 
         for(Authority.UserRoles userRoles : Authority.UserRoles.values()){
             values.add(userRoles.name());
@@ -140,7 +146,6 @@ public class UserService {
             throw new OptionDoesNotExistException(Authority.class, values.toString(), "authority", authority);
         }
 
-        User user = userRepository.findById(username).get();
         user.addAuthority(new Authority(username, foundRole));
         Instant updated = Instant.now();
         user.setDateModified(updated);
@@ -148,8 +153,10 @@ public class UserService {
     }
 
     public void removeAuthority(String username, String authority) {
-        if (!userRepository.existsById(username)) throw new EntityNotFoundException(User.class, "username", username);
-        User user = userRepository.findById(username).get();
+
+        User user = userRepository.findById(username).orElseThrow(
+                () -> new EntityNotFoundException(User.class, "username", username)
+        );
         Authority authorityToRemove = user.getAuthorities().stream().filter((a) -> a.getAuthority().equalsIgnoreCase(authority)).findAny().get();
         if(authorityToRemove.getAuthority().equalsIgnoreCase(Authority.UserRoles.DEFAULT.toString())) {
             throw new DefaultRoleCantBeRemovedException(Authority.class, "authority", Authority.UserRoles.DEFAULT.toString());

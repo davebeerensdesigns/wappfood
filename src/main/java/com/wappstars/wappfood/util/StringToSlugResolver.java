@@ -1,7 +1,6 @@
 package com.wappstars.wappfood.util;
 
 import java.text.Normalizer;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class StringToSlugResolver {

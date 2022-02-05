@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 
 @Entity
 @Table(name = "category", uniqueConstraints = {@UniqueConstraint(name = "cat_slug_unique", columnNames = "slug")})

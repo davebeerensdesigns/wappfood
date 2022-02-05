@@ -1,6 +1,5 @@
 package com.wappstars.wappfood.service;
 
-import com.wappstars.wappfood.controller.CustomerController;
 import com.wappstars.wappfood.dto.CustomerInputDto;
 import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
@@ -116,7 +115,7 @@ public class CustomerService {
         }
 
         if(newCustomer.getUsername() != null) {
-            if (!customer.getUsername().equals(customer.getUsername())){
+            if (!customer.getUsername().equals(newCustomer.getUsername())){
                 if (!userIdExists(customer.getUsername())) {
                     throw new EntityNotFoundException(User.class, "username", customer.getUsername());
                 } else {
@@ -149,9 +148,10 @@ public class CustomerService {
     }
 
     public Customer addCustomerMeta(Integer customerId, Map<String, String> metaData, String type) {
-        if (!customerRepository.existsById(customerId)) throw new EntityNotFoundException(Customer.class, "customer_id", customerId.toString());
 
-        Customer customer = customerRepository.findById(customerId).get();
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException(Customer.class, "customer_id", customerId.toString())
+        );
 
         List<CustomerMeta> customerMetaData = new ArrayList<>();
 
@@ -365,9 +365,7 @@ public class CustomerService {
 
             }
         }
-        Customer customer = customerRepository.findById(customerId).get();
-        return customer;
-
+        return customerRepository.getById(customerId);
     }
 
     @Transactional

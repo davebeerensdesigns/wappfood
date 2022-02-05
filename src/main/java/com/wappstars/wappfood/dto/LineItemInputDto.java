@@ -2,7 +2,6 @@ package com.wappstars.wappfood.dto;
 
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 

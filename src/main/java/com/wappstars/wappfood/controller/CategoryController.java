@@ -1,18 +1,13 @@
 package com.wappstars.wappfood.controller;
 
 import com.wappstars.wappfood.assembler.CategoryDtoAssembler;
-import com.wappstars.wappfood.dto.*;
 import com.wappstars.wappfood.dto.CategoryDto;
 import com.wappstars.wappfood.dto.CategoryInputDto;
-import com.wappstars.wappfood.model.Category;
-import com.wappstars.wappfood.model.Category;
 import com.wappstars.wappfood.model.Category;
 import com.wappstars.wappfood.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

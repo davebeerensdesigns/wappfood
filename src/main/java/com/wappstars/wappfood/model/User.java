@@ -18,6 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "user_email_unique", columnNames = "email")})
@@ -28,7 +29,7 @@ public class User extends RepresentationModel<User> {
     @NotNull(message = "Username is mandatory")
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     @NotNull(message = "Password is mandatory")
     private String password;
 

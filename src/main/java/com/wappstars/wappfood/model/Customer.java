@@ -17,6 +17,7 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 
 @Entity
 @Table(name = "customer", uniqueConstraints = {@UniqueConstraint(name = "username_unique", columnNames = "username"), @UniqueConstraint(name = "customer_email_unique", columnNames = "email")})
@@ -59,30 +60,14 @@ public class Customer extends RepresentationModel<Customer> {
         if(customerMetas != null) {
             for (CustomerMeta metaData : customerMetas) {
                 switch (metaData.getMetaKey()) {
-                    case "_billing_phone":
-                        billingMap.put("phone", metaData.getMetaValue());
-                        break;
-                    case "_billing_email":
-                        billingMap.put("email", metaData.getMetaValue());
-                        break;
-                    case "_billing_company":
-                        billingMap.put("company", metaData.getMetaValue());
-                        break;
-                    case "_billing_address":
-                        billingMap.put("address", metaData.getMetaValue());
-                        break;
-                    case "_billing_city":
-                        billingMap.put("city", metaData.getMetaValue());
-                        break;
-                    case "_billing_state":
-                        billingMap.put("state", metaData.getMetaValue());
-                        break;
-                    case "_billing_postcode":
-                        billingMap.put("postcode", metaData.getMetaValue());
-                        break;
-                    case "_billing_country":
-                        billingMap.put("country", metaData.getMetaValue());
-                        break;
+                    case "_billing_phone" -> billingMap.put("phone", metaData.getMetaValue());
+                    case "_billing_email" -> billingMap.put("email", metaData.getMetaValue());
+                    case "_billing_company" -> billingMap.put("company", metaData.getMetaValue());
+                    case "_billing_address" -> billingMap.put("address", metaData.getMetaValue());
+                    case "_billing_city" -> billingMap.put("city", metaData.getMetaValue());
+                    case "_billing_state" -> billingMap.put("state", metaData.getMetaValue());
+                    case "_billing_postcode" -> billingMap.put("postcode", metaData.getMetaValue());
+                    case "_billing_country" -> billingMap.put("country", metaData.getMetaValue());
                 }
             }
         }
@@ -94,24 +79,12 @@ public class Customer extends RepresentationModel<Customer> {
         if(customerMetas != null) {
             for (CustomerMeta metaData : customerMetas) {
                 switch (metaData.getMetaKey()) {
-                    case "_shipping_company":
-                        shippingMap.put("company", metaData.getMetaValue());
-                        break;
-                    case "_shipping_address":
-                        shippingMap.put("address", metaData.getMetaValue());
-                        break;
-                    case "_shipping_city":
-                        shippingMap.put("city", metaData.getMetaValue());
-                        break;
-                    case "_shipping_state":
-                        shippingMap.put("state", metaData.getMetaValue());
-                        break;
-                    case "_shipping_postcode":
-                        shippingMap.put("postcode", metaData.getMetaValue());
-                        break;
-                    case "_shipping_country":
-                        shippingMap.put("country", metaData.getMetaValue());
-                        break;
+                    case "_shipping_company" -> shippingMap.put("company", metaData.getMetaValue());
+                    case "_shipping_address" -> shippingMap.put("address", metaData.getMetaValue());
+                    case "_shipping_city" -> shippingMap.put("city", metaData.getMetaValue());
+                    case "_shipping_state" -> shippingMap.put("state", metaData.getMetaValue());
+                    case "_shipping_postcode" -> shippingMap.put("postcode", metaData.getMetaValue());
+                    case "_shipping_country" -> shippingMap.put("country", metaData.getMetaValue());
                 }
             }
         }

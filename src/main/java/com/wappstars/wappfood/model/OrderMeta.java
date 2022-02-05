@@ -1,6 +1,5 @@
 package com.wappstars.wappfood.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;

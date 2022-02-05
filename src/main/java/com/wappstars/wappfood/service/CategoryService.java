@@ -4,7 +4,6 @@ import com.wappstars.wappfood.dto.CategoryInputDto;
 import com.wappstars.wappfood.exception.EntityExistsException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
 import com.wappstars.wappfood.model.Category;
-import com.wappstars.wappfood.model.Product;
 import com.wappstars.wappfood.repository.CategoryRepository;
 import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.util.StringToSlugResolver;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-//TODO: Run validations on category
 
 @Service
 public class CategoryService {

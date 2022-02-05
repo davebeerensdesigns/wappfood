@@ -19,20 +19,21 @@ import java.util.*;
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final CustomerService customerService;
+    private final ProductRepository productRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, UserRepository userRepository, CustomerService customerService, ProductRepository productRepository){
+        this.orderRepository = orderRepository;
+        this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
+        this. customerService = customerService;
+        this.productRepository = productRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CustomerService customerService;
-
-    @Autowired
-    private ProductRepository productRepository;
+    }
 
     public List<Order> getOrders() {
         List<Order> orders = orderRepository.findAll();
@@ -271,11 +272,10 @@ public class OrderService {
 
         Order order = new Order();
 
-        boolean orderPayed = false;
-        if(dto.getOrderIsPayed() == null || dto.getOrderIsPayed() == false){
+        if(dto.getOrderIsPayed() == null || !dto.getOrderIsPayed()){
             order.setOrderIsPayed(false);
             order.setOrderStatus(Order.OrderStatus.PENDING);
-        } else if(dto.getOrderIsPayed() == true){
+        } else if(dto.getOrderIsPayed()){
             order.setOrderIsPayed(true);
             order.setOrderStatus(Order.OrderStatus.PROCESSING);
         }
@@ -290,7 +290,7 @@ public class OrderService {
             order.setFirstName(customer.getFirstName());
             order.setLastName(customer.getLastName());
             order.setCustomer(customer);
-            if(dto.getOrderIsPayed() == true){
+            if(dto.getOrderIsPayed()){
                 customer.setPayingCustomer(true);
             }
             customerRepository.save(customer);
@@ -313,7 +313,7 @@ public class OrderService {
                 customerInputDto.setUsername(user.getUsername());
             }
 
-            if(dto.getOrderIsPayed() != null && dto.getOrderIsPayed() == true){
+            if(dto.getOrderIsPayed() != null && dto.getOrderIsPayed()){
                 customerInputDto.setPayingCustomer(true);
             }
             Customer newCustomer = customerService.addCustomer(customerInputDto);
@@ -331,7 +331,7 @@ public class OrderService {
 
         order.setLineItems(lineItemList);
 
-        Double orderTotal = lineItemList.stream().mapToDouble(l -> l.getTotal()).sum();
+        Double orderTotal = lineItemList.stream().mapToDouble(LineItem::getTotal).sum();
         order.setTotalPrice(orderTotal);
 
         // create order
@@ -340,24 +340,20 @@ public class OrderService {
 
 
     public Order setOrderPayed(Integer orderId) {
-        Order order = orderRepository.getById(orderId);
-        if(order != null) {
-            order.setOrderIsPayed(true);
-            order.setOrderStatus(Order.OrderStatus.PROCESSING);
-        } else {
-            throw new EntityNotFoundException(Order.class, "order id", orderId.toString());
-        }
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException(Order.class, "order id", orderId.toString())
+        );
+        order.setOrderIsPayed(true);
+        order.setOrderStatus(Order.OrderStatus.PROCESSING);
         return orderRepository.save(order);
     }
 
 
     public Order setOrderStatus(Integer orderId, Order.OrderStatus orderStatus) {
-        Order order = orderRepository.getById(orderId);
-        if(order != null) {
-            order.setOrderStatus(orderStatus);
-        } else {
-            throw new EntityNotFoundException(Order.class, "order id", orderId.toString());
-        }
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException(Order.class, "order id", orderId.toString())
+        );
+        order.setOrderStatus(orderStatus);
         return orderRepository.save(order);
     }
 }
