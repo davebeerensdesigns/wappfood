@@ -28,6 +28,8 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private Instant dateCreated;
     private Instant dateModified;
     private Double totalPrice;
+    private String orderStatus;
+    private Boolean orderIsPayed;
     private final Map<String, String> billing;
     private final Map<String, String> shipping;
     private List<LineItem> lineItems;

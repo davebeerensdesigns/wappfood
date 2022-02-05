@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class ShippingDto {
+public class ShippingInputDto {
 
     private String company;
     private String address;

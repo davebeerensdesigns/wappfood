@@ -85,6 +85,10 @@ public class CustomerService {
             newCustomer.setLastName(HtmlToTextResolver.HtmlToText(customer.getLastName()));
         }
 
+        if(customer.isPayingCustomer()){
+            newCustomer.setPayingCustomer(customer.isPayingCustomer());
+        }
+
         return customerRepository.save(newCustomer);
     }
 
@@ -223,7 +227,7 @@ public class CustomerService {
                     case "country":
                         String country = HtmlToTextResolver.HtmlToText(entry.getValue());
                         if(!ValidMetaData.isValidCountry(country)){
-                            throw new IllegalArgumentException("Please enter a valid country address");
+                            throw new IllegalArgumentException("Please enter a valid country");
                         } else {
                             customerMetaData.add(new CustomerMeta("_"+metaType+"_country", country, customer));
                         }

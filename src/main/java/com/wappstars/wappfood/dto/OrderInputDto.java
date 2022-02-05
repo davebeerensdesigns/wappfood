@@ -11,7 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderInputDto {
 
-    private BillingDto billing;
-    private ShippingDto shipping;
+    private Boolean orderIsPayed;
+    private BillingInputDto billing;
+    private ShippingInputDto shipping;
     private List<LineItemInputDto> lineItems;
 }

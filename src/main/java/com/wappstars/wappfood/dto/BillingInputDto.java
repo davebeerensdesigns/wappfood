@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class BillingDto {
+public class BillingInputDto {
 
     private String firstName;
     private String lastName;

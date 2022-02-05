@@ -21,6 +21,8 @@ public class OrderDtoAssembler implements RepresentationModelAssembler<Order, Or
                 .dateCreated(entity.getDateCreated())
                 .dateModified(entity.getDateModified())
                 .totalPrice(entity.getTotalPrice())
+                .orderStatus(entity.getOrderStatus().toString())
+                .orderIsPayed(entity.getOrderIsPayed())
                 .billing(entity.getBilling())
                 .shipping(entity.getShipping())
                 .lineItems(entity.getLineItems())

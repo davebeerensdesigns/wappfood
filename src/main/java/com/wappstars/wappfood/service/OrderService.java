@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
@@ -26,9 +25,6 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private CustomerService customerService;
@@ -65,123 +61,181 @@ public class OrderService {
 
         List<OrderMeta> orderMetaData = new ArrayList<>();
 
-        Map<String, String> billingMap = new HashMap<>();
         Map<String, String> shippingMap = new HashMap<>();
 
+        Map<String, String> billingMap = new HashMap<>();
+
         if(dto.getBilling().getPhone() != null){
-            OrderMeta billingMetaPhone = new OrderMeta();
-            billingMetaPhone.setMetaKey("_billing_phone");
-            billingMetaPhone.setMetaValue(dto.getBilling().getPhone());
-            orderMetaData.add(billingMetaPhone);
-            billingMap.put("phone", dto.getBilling().getPhone());
+            String billingPhone = HtmlToTextResolver.HtmlToText(dto.getBilling().getPhone());
+            if(!ValidMetaData.isValidPhone(billingPhone)){
+                throw new IllegalArgumentException("Please enter a valid phone number");
+            } else {
+                OrderMeta billingMetaPhone = new OrderMeta();
+                billingMetaPhone.setMetaKey("_billing_phone");
+                billingMetaPhone.setMetaValue(billingPhone);
+                orderMetaData.add(billingMetaPhone);
+                billingMap.put("phone", billingPhone);
+            }
         } else {
             throw new NullPointerException("Phone is mandatory");
         }
 
         if(dto.getBilling().getEmail() != null){
-            OrderMeta billingMetaEmail = new OrderMeta();
-            billingMetaEmail.setMetaKey("_billing_email");
-            billingMetaEmail.setMetaValue(dto.getBilling().getEmail());
-            orderMetaData.add(billingMetaEmail);
-            billingMap.put("email", dto.getBilling().getEmail());
+            String billingEmail = HtmlToTextResolver.HtmlToText(dto.getBilling().getEmail());
+            if (!ValidMetaData.isValidEmail(billingEmail)) {
+                throw new IllegalArgumentException("Please enter a valid email address");
+            } else {
+                OrderMeta billingMetaEmail = new OrderMeta();
+                billingMetaEmail.setMetaKey("_billing_email");
+                billingMetaEmail.setMetaValue(billingEmail);
+                orderMetaData.add(billingMetaEmail);
+                billingMap.put("email", billingEmail);
+            }
         } else {
             throw new NullPointerException("Email is mandatory");
         }
 
         if(dto.getBilling().getCompany() != null){
-            OrderMeta billingMetaCompany = new OrderMeta();
-            billingMetaCompany.setMetaKey("_billing_company");
-            billingMetaCompany.setMetaValue(dto.getBilling().getCompany());
-            orderMetaData.add(billingMetaCompany);
-            billingMap.put("company", dto.getBilling().getCompany());
+            String billingCompany = HtmlToTextResolver.HtmlToText(dto.getBilling().getCompany());
+            if(!ValidMetaData.isValidCompany(billingCompany)){
+                throw new IllegalArgumentException("Please enter a valid company");
+            } else {
+                OrderMeta billingMetaCompany = new OrderMeta();
+                billingMetaCompany.setMetaKey("_billing_company");
+                billingMetaCompany.setMetaValue(billingCompany);
+                orderMetaData.add(billingMetaCompany);
+                billingMap.put("company", billingCompany);
+            }
         }
 
         if(dto.getBilling().getAddress() != null){
-            OrderMeta billingMetaAddress = new OrderMeta();
-            billingMetaAddress.setMetaKey("_billing_address");
-            billingMetaAddress.setMetaValue(dto.getBilling().getAddress());
-            orderMetaData.add(billingMetaAddress);
-            billingMap.put("address", dto.getBilling().getAddress());
+            String billingAddress = HtmlToTextResolver.HtmlToText(dto.getBilling().getAddress());
+            if(!ValidMetaData.isValidAddress(billingAddress)){
+                throw new IllegalArgumentException("Please enter a valid address");
+            } else {
+                OrderMeta billingMetaAddress = new OrderMeta();
+                billingMetaAddress.setMetaKey("_billing_address");
+                billingMetaAddress.setMetaValue(billingAddress);
+                orderMetaData.add(billingMetaAddress);
+                billingMap.put("address", billingAddress);
+            }
         }
 
         if(dto.getBilling().getCity() != null){
-            OrderMeta billingMetaCity = new OrderMeta();
-            billingMetaCity.setMetaKey("_billing_city");
-            billingMetaCity.setMetaValue(dto.getBilling().getCity());
-            orderMetaData.add(billingMetaCity);
-            billingMap.put("city", dto.getBilling().getCity());
+            String billingCity = HtmlToTextResolver.HtmlToText(dto.getBilling().getCity());
+            if(!ValidMetaData.isValidCity(billingCity)){
+                throw new IllegalArgumentException("Please enter a valid city");
+            } else {
+                OrderMeta billingMetaCity = new OrderMeta();
+                billingMetaCity.setMetaKey("_billing_city");
+                billingMetaCity.setMetaValue(billingCity);
+                orderMetaData.add(billingMetaCity);
+                billingMap.put("city", billingCity);
+            }
         }
 
         if(dto.getBilling().getState() != null){
-            OrderMeta billingMetaState = new OrderMeta();
-            billingMetaState.setMetaKey("_billing_state");
-            billingMetaState.setMetaValue(dto.getBilling().getState());
-            orderMetaData.add(billingMetaState);
-            billingMap.put("state", dto.getBilling().getState());
+            String billingState = HtmlToTextResolver.HtmlToText(dto.getBilling().getState());
+            if(!ValidMetaData.isValidState(billingState)){
+                throw new IllegalArgumentException("Please enter a valid state");
+            } else {
+                OrderMeta billingMetaState = new OrderMeta();
+                billingMetaState.setMetaKey("_billing_state");
+                billingMetaState.setMetaValue(billingState);
+                orderMetaData.add(billingMetaState);
+                billingMap.put("state", billingState);
+            }
         }
 
         if(dto.getBilling().getPostcode() != null){
-            OrderMeta billingMetaPostcode = new OrderMeta();
-            billingMetaPostcode.setMetaKey("_billing_postcode");
-            billingMetaPostcode.setMetaValue(dto.getBilling().getPostcode());
-            orderMetaData.add(billingMetaPostcode);
-            billingMap.put("postcode", dto.getBilling().getPostcode());
+            String billingPostcode = HtmlToTextResolver.HtmlToText(dto.getBilling().getPostcode());
+            if(!ValidMetaData.isValidPostcode(billingPostcode)){
+                throw new IllegalArgumentException("Please enter a valid postcode");
+            } else {
+                OrderMeta billingMetaPostcode = new OrderMeta();
+                billingMetaPostcode.setMetaKey("_billing_postcode");
+                billingMetaPostcode.setMetaValue(billingPostcode);
+                orderMetaData.add(billingMetaPostcode);
+                billingMap.put("postcode", billingPostcode);
+            }
         }
 
         if(dto.getBilling().getCountry() != null){
-            OrderMeta billingMetaCountry = new OrderMeta();
-            billingMetaCountry.setMetaKey("_billing_country");
-            billingMetaCountry.setMetaValue(dto.getBilling().getCountry());
-            orderMetaData.add(billingMetaCountry);
-            billingMap.put("country", dto.getBilling().getCountry());
-        }
-
-        if(dto.getShipping().getCompany() != null){
-            OrderMeta shippingMetaCompany = new OrderMeta();
-            shippingMetaCompany.setMetaKey("_shipping_company");
-            shippingMetaCompany.setMetaValue(dto.getShipping().getCompany());
-            orderMetaData.add(shippingMetaCompany);
-            shippingMap.put("company", dto.getShipping().getCompany());
+            String billingCountry = HtmlToTextResolver.HtmlToText(dto.getBilling().getCountry());
+            if(!ValidMetaData.isValidCountry(billingCountry)){
+                throw new IllegalArgumentException("Please enter a valid country");
+            } else {
+                OrderMeta billingMetaCountry = new OrderMeta();
+                billingMetaCountry.setMetaKey("_billing_country");
+                billingMetaCountry.setMetaValue(billingCountry);
+                orderMetaData.add(billingMetaCountry);
+                billingMap.put("country", billingCountry);
+            }
         }
 
         if(dto.getShipping().getAddress() != null){
-            OrderMeta shippingMetaAddress = new OrderMeta();
-            shippingMetaAddress.setMetaKey("_shipping_address");
-            shippingMetaAddress.setMetaValue(dto.getShipping().getAddress());
-            orderMetaData.add(shippingMetaAddress);
-            shippingMap.put("address", dto.getShipping().getAddress());
+            String shippingAddress = HtmlToTextResolver.HtmlToText(dto.getShipping().getAddress());
+            if(!ValidMetaData.isValidAddress(shippingAddress)){
+                throw new IllegalArgumentException("Please enter a valid address");
+            } else {
+                OrderMeta shippingMetaAddress = new OrderMeta();
+                shippingMetaAddress.setMetaKey("_shipping_address");
+                shippingMetaAddress.setMetaValue(shippingAddress);
+                orderMetaData.add(shippingMetaAddress);
+                shippingMap.put("address", shippingAddress);
+            }
         }
 
         if(dto.getShipping().getCity() != null){
-            OrderMeta shippingMetaCity = new OrderMeta();
-            shippingMetaCity.setMetaKey("_shipping_city");
-            shippingMetaCity.setMetaValue(dto.getShipping().getCity());
-            orderMetaData.add(shippingMetaCity);
-            shippingMap.put("city", dto.getShipping().getCity());
+            String shippingCity = HtmlToTextResolver.HtmlToText(dto.getShipping().getCity());
+            if(!ValidMetaData.isValidCity(shippingCity)){
+                throw new IllegalArgumentException("Please enter a valid city");
+            } else {
+                OrderMeta shippingMetaCity = new OrderMeta();
+                shippingMetaCity.setMetaKey("_shipping_city");
+                shippingMetaCity.setMetaValue(shippingCity);
+                orderMetaData.add(shippingMetaCity);
+                shippingMap.put("city", shippingCity);
+            }
         }
 
         if(dto.getShipping().getState() != null){
-            OrderMeta shippingMetaState = new OrderMeta();
-            shippingMetaState.setMetaKey("_shipping_state");
-            shippingMetaState.setMetaValue(dto.getShipping().getState());
-            orderMetaData.add(shippingMetaState);
-            shippingMap.put("state", dto.getShipping().getState());
+            String shippingState = HtmlToTextResolver.HtmlToText(dto.getShipping().getState());
+            if(!ValidMetaData.isValidState(shippingState)){
+                throw new IllegalArgumentException("Please enter a valid state");
+            } else {
+                OrderMeta shippingMetaState = new OrderMeta();
+                shippingMetaState.setMetaKey("_shipping_state");
+                shippingMetaState.setMetaValue(shippingState);
+                orderMetaData.add(shippingMetaState);
+                shippingMap.put("state", shippingState);
+            }
         }
 
         if(dto.getShipping().getPostcode() != null){
-            OrderMeta shippingMetaPostcode = new OrderMeta();
-            shippingMetaPostcode.setMetaKey("_shipping_postcode");
-            shippingMetaPostcode.setMetaValue(dto.getShipping().getPostcode());
-            orderMetaData.add(shippingMetaPostcode);
-            shippingMap.put("postcode", dto.getShipping().getPostcode());
+            String shippingPostcode = HtmlToTextResolver.HtmlToText(dto.getShipping().getPostcode());
+            if(!ValidMetaData.isValidPostcode(shippingPostcode)){
+                throw new IllegalArgumentException("Please enter a valid postcode");
+            } else {
+                OrderMeta shippingMetaPostcode = new OrderMeta();
+                shippingMetaPostcode.setMetaKey("_shipping_postcode");
+                shippingMetaPostcode.setMetaValue(shippingPostcode);
+                orderMetaData.add(shippingMetaPostcode);
+                shippingMap.put("postcode", shippingPostcode);
+            }
         }
 
         if(dto.getShipping().getCountry() != null){
-            OrderMeta shippingMetaCountry = new OrderMeta();
-            shippingMetaCountry.setMetaKey("_shipping_country");
-            shippingMetaCountry.setMetaValue(dto.getShipping().getCountry());
-            orderMetaData.add(shippingMetaCountry);
-            shippingMap.put("country", dto.getShipping().getCountry());
+            String shippingCountry = HtmlToTextResolver.HtmlToText(dto.getShipping().getCountry());
+            if(!ValidMetaData.isValidCountry(shippingCountry)){
+                throw new IllegalArgumentException("Please enter a valid country");
+            } else {
+                OrderMeta shippingMetaCountry = new OrderMeta();
+                shippingMetaCountry.setMetaKey("_shipping_country");
+                shippingMetaCountry.setMetaValue(shippingCountry);
+                orderMetaData.add(shippingMetaCountry);
+                shippingMap.put("country", shippingCountry);
+            }
         }
 
 
@@ -206,9 +260,18 @@ public class OrderService {
 
         Order order = new Order();
 
-        String billingEmail = dto.getBilling().getEmail();
-        Customer customer = customerRepository.findByEmail(billingEmail);
-        User user = userRepository.getByEmail(billingEmail);
+        boolean orderPayed = false;
+        if(dto.getOrderIsPayed() == null || dto.getOrderIsPayed() == false){
+            order.setOrderIsPayed(false);
+            order.setOrderStatus(Order.OrderStatus.PENDING);
+        } else if(dto.getOrderIsPayed() == true){
+            order.setOrderIsPayed(true);
+            order.setOrderStatus(Order.OrderStatus.PROCESSING);
+        }
+
+        String customerEmail = HtmlToTextResolver.HtmlToText(dto.getBilling().getEmail());
+        Customer customer = customerRepository.getByEmail(customerEmail);
+        User user = userRepository.getByEmail(customerEmail);
 
         // get or create customer by billing email
         if(customer != null){
@@ -216,6 +279,10 @@ public class OrderService {
             order.setFirstName(customer.getFirstName());
             order.setLastName(customer.getLastName());
             order.setCustomer(customer);
+            if(dto.getOrderIsPayed() == true){
+                customer.setPayingCustomer(true);
+            }
+            customerRepository.save(customer);
         } else {
             CustomerInputDto customerInputDto = new CustomerInputDto();
             if(dto.getBilling().getFirstName() != null){
@@ -234,6 +301,10 @@ public class OrderService {
             if(user != null){
                 customerInputDto.setUsername(user.getUsername());
             }
+
+            if(dto.getOrderIsPayed() == true){
+                customerInputDto.setPayingCustomer(true);
+            }
             Customer newCustomer = customerService.addCustomer(customerInputDto);
 
             customerService.addCustomerMeta(newCustomer.getId(), billingMap, "billing");
@@ -245,21 +316,15 @@ public class OrderService {
 
 
 
+        order.setOrderMetas(orderMetaData);
 
-
-
-
-        Order createdOrder = orderRepository.save(order);
-
-        createdOrder.setOrderMetas(orderMetaData);
-
-        createdOrder.setLineItems(lineItemList);
+        order.setLineItems(lineItemList);
 
         Double orderTotal = lineItemList.stream().mapToDouble(l -> l.getTotal()).sum();
-        createdOrder.setTotalPrice(orderTotal);
+        order.setTotalPrice(orderTotal);
 
         // create order
-        return orderRepository.save(createdOrder);
+        return orderRepository.save(order);
     }
 
 }

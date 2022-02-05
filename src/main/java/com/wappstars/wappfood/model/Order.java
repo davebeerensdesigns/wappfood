@@ -51,6 +51,13 @@ public class Order extends RepresentationModel<Order> {
     @Column(name = "total_price")
     private Double totalPrice;
 
+    @Column
+    @Enumerated(EnumType.ORDINAL)
+    private OrderStatus orderStatus;
+
+    @Column
+    private Boolean orderIsPayed;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Customer customer;
@@ -61,6 +68,26 @@ public class Order extends RepresentationModel<Order> {
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderMeta> orderMetas;
 
+    public enum OrderStatus {
+        PENDING("Pending"),
+        PROCESSING("Processing"),
+        ON_HOLD("On hold"),
+        COMPLETED("Completed"),
+        CANCELLED("Cancelled"),
+        REFUNDED("Refunded"),
+        FAILED("Failed"),
+        TRASH("Trash");
+
+        String value;
+        OrderStatus(String value){
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
 
     public Map<String, String> getBilling(){
         Map<String, String> billingMap = new HashMap<>();
