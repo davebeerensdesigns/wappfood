@@ -3,11 +3,14 @@ package com.wappstars.wappfood.service;
 import com.wappstars.wappfood.dto.CustomerInputDto;
 import com.wappstars.wappfood.dto.LineItemInputDto;
 import com.wappstars.wappfood.dto.OrderInputDto;
+import com.wappstars.wappfood.exception.BadRequestException;
 import com.wappstars.wappfood.exception.EntityNotFoundException;
+import com.wappstars.wappfood.exception.NoStockException;
 import com.wappstars.wappfood.model.*;
 import com.wappstars.wappfood.repository.*;
 import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.validators.ValidMetaData;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +80,7 @@ public class OrderService {
                 billingMap.put("phone", billingPhone);
             }
         } else {
-            throw new NullPointerException("Phone is mandatory");
+            throw new BadRequestException(Order.class, "phone", "mandatory");
         }
 
         if(dto.getBilling().getEmail() != null){
@@ -92,7 +95,7 @@ public class OrderService {
                 billingMap.put("email", billingEmail);
             }
         } else {
-            throw new NullPointerException("Email is mandatory");
+            throw new BadRequestException(Order.class, "email", "mandatory");
         }
 
         if(dto.getBilling().getCompany() != null){
@@ -243,19 +246,28 @@ public class OrderService {
 
         for(LineItemInputDto lineItemInputDto : dto.getLineItems()){
             Integer productId = lineItemInputDto.getProductId();
-            Product product = productRepository.getById(productId);
-            Double price = product.getPrice();
-            Integer quantity = lineItemInputDto.getQuantity();
+            Product product = productRepository.findById(productId).orElse(null);
+            if(product != null) {
+                Double price = product.getPrice();
+                Integer quantity = lineItemInputDto.getQuantity();
 
-            LineItem lineItem = new LineItem();
-            lineItem.setProductId(productId);
-            lineItem.setProductName(product.getName());
-            lineItem.setQuantity(quantity);
-            lineItem.setPrice(price);
-            lineItem.setTotal(quantity * price);
-            lineItem.setSku(product.getSku());
+                LineItem lineItem = new LineItem();
+                lineItem.setProductId(productId);
+                lineItem.setProductName(product.getName());
+                lineItem.setQuantity(quantity);
+                lineItem.setPrice(price);
+                lineItem.setTotal(quantity * price);
+                lineItem.setSku(product.getSku());
 
-            lineItemList.add(lineItem);
+                lineItemList.add(lineItem);
+                if((product.getStockQty() - quantity) >= 0) {
+                    product.setStockQty(product.getStockQty() - quantity);
+                } else {
+                    throw new NoStockException(productId, product.getStockQty());
+                }
+            } else {
+                throw new EntityNotFoundException(Product.class, "id", productId.toString());
+            }
         }
 
         Order order = new Order();

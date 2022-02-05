@@ -31,35 +31,42 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = RecordNotFoundException.class)
-    public ResponseEntity<Object> exception(RecordNotFoundException ex) {
+    public ResponseEntity<Object> handleRecordNotFoundException(RecordNotFoundException ex) {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(value = BadRequestException.class)
-    public ResponseEntity<Object> exception(BadRequestException ex) {
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(value = NoStockException.class)
+    public ResponseEntity<Object> handleNoStockException(NoStockException ex) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity<Object> exception(UsernameNotFoundException ex) {
+    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(value = OptionDoesNotExistException.class)
-    public ResponseEntity<Object> exception(OptionDoesNotExistException ex) {
+    public ResponseEntity<Object> handleOptionDoesNotExistException(OptionDoesNotExistException ex) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(value = DefaultRoleCantBeRemovedException.class)
-    public ResponseEntity<Object> exception(DefaultRoleCantBeRemovedException ex) {
+    public ResponseEntity<Object> handleDefaultRoleCantBeRemovedException(DefaultRoleCantBeRemovedException ex) {
         ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
