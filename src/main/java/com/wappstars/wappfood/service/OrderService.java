@@ -10,7 +10,6 @@ import com.wappstars.wappfood.model.*;
 import com.wappstars.wappfood.repository.*;
 import com.wappstars.wappfood.util.HtmlToTextResolver;
 import com.wappstars.wappfood.validators.ValidMetaData;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
