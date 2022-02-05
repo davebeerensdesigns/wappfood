@@ -15,12 +15,7 @@ public class WappfoodApplication {
 		System.out.println("Application is running");
 	}
 
-	// TODO: Use role-based access policies on API-endpoints and double check capabilities for roles
-	// TODO: Maybe change endpoints to seperate data more (public/admin)
-	// TODO: Exception for adding already existing user role
-	// TODO: Check all custom validation for models (maybe use ValidMetaData class)
-	// TODO: Add modified by user. (maybe last login date)
-	// TODO: Create tests for current code (product, category, exceptions)
-	// TODO: Add Billing and Shipping Meta data to Order
-	// TODO: Use same function to Billing and Shipping on Customer Meta and Order Meta
+	// TODO: Create tests
+	// TODO: set endpoint restrictions
+	// TODO: Create API Documentation
 }
