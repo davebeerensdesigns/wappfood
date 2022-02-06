@@ -76,19 +76,27 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/wp-json/wf/v1/authenticate").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/authenticated").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/products").permitAll()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/products/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/categories").permitAll()
-                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/media/download/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/categories/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/media/download").permitAll()
                 // Our private endpoints
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/authenticated").authenticated()
                 .antMatchers("/wp-json/wf/v1/users/*/authorities").hasRole("ADMIN")
                 .antMatchers("/wp-json/wf/v1/users").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/users/**").hasAnyRole("ADMIN", "SHOPMANAGER")
                 .antMatchers("/wp-json/wf/v1/products").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/products/**").hasAnyRole("ADMIN", "SHOPMANAGER")
                 .antMatchers("/wp-json/wf/v1/categories").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/categories/**").hasAnyRole("ADMIN", "SHOPMANAGER")
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/customers").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
                 .antMatchers("/wp-json/wf/v1/customers").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/customers/**").hasAnyRole("ADMIN", "SHOPMANAGER")
                 .antMatchers(HttpMethod.GET,"/wp-json/wf/v1/orders").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
                 .antMatchers(HttpMethod.PATCH,"/wp-json/wf/v1/orders/*/status").hasAnyRole("ADMIN", "SHOPMANAGER", "EMPLOYEE")
                 .antMatchers("/wp-json/wf/v1/orders").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/orders/**").hasAnyRole("ADMIN", "SHOPMANAGER")
+                .antMatchers("/wp-json/wf/v1/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated();
 
         // Add JWT token filter

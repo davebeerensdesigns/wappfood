@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import javax.validation.ConstraintViolation;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +23,13 @@ import java.util.Set;
 public class ApiError {
 
     private HttpStatus status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDateTime timestamp;
+    private Instant timestamp;
     private String message;
     private String debugMessage;
     private List<ApiSubError> subErrors;
 
     private ApiError() {
-        timestamp = LocalDateTime.now();
+        timestamp = Instant.now();
     }
 
     public ApiError(HttpStatus status) {
